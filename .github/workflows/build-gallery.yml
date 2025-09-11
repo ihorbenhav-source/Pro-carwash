@@ -19,7 +19,6 @@ jobs:
           import os, json, re, pathlib
           folder = pathlib.Path("assets/foto")
           files = [f.name for f in folder.iterdir() if f.is_file() and not f.name.startswith(".")]
-          # «естественная» сортировка: 001, 2, 10 — по числам и тексту
           def key(s):
               parts = re.split(r'(\d+)', s)
               return [int(p) if p.isdigit() else p.lower() for p in parts]
@@ -38,4 +37,3 @@ jobs:
             git push
           else
             echo "No changes."
-          fi
