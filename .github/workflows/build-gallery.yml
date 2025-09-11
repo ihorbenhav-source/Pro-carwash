@@ -36,8 +36,10 @@ jobs:
               json.dumps(out, ensure_ascii=False, indent=2)
           )
           PY
-      - name: Commit & push
-       - name: Commit & push
+     - name: Set up GitHub token
+  run: git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+
+- name: Commit & push
   run: |
     git config user.name "github-actions[bot]"
     git config user.email "github-actions[bot]@users.noreply.github.com"
