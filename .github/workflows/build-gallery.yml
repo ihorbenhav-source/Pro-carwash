@@ -7,21 +7,23 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: write   # <-- ДАЁМ ПРАВО НА ЗАПИСЬ
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: true   # важно!
       - name: Generate assets/gallery.json
         run: |
           python3 - <<'PY'
           import os, json, re, pathlib
           folder = pathlib.Path("assets/foto")
-          folder.mkdir(parents=True, exist_ok=True)
           files = [f.name for f in folder.iterdir() if f.is_file() and not f.name.startswith(".")]
           def key(s):
+              import re
               parts = re.split(r'(\d+)', s)
               return [int(p) if p.isdigit() else p.lower() for p in parts]
           files.sort(key=key)
