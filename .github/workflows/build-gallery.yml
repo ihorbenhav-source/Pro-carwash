@@ -6,18 +6,20 @@ on:
       - '.github/workflows/build-gallery.yml'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
       - name: Generate assets/gallery.json
         run: |
           python3 - <<'PY'
           import os, json, re, pathlib
           folder = pathlib.Path("assets/foto")
+          folder.mkdir(parents=True, exist_ok=True)
           files = [f.name for f in folder.iterdir() if f.is_file() and not f.name.startswith(".")]
           def key(s):
               parts = re.split(r'(\d+)', s)
