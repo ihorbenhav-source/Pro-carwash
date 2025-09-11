@@ -1,0 +1,41 @@
+name: Build gallery manifest
+on:
+  push:
+    paths:
+      - 'assets/foto/**'
+      - '.github/workflows/build-gallery.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Generate assets/gallery.json
+        run: |
+          python3 - <<'PY'
+          import os, json, re, pathlib
+          folder = pathlib.Path("assets/foto")
+          files = [f.name for f in folder.iterdir() if f.is_file() and not f.name.startswith(".")]
+          # «естественная» сортировка: 001, 2, 10 — по числам и тексту
+          def key(s):
+              parts = re.split(r'(\d+)', s)
+              return [int(p) if p.isdigit() else p.lower() for p in parts]
+          files.sort(key=key)
+          (pathlib.Path("assets") / "gallery.json").write_text(
+              json.dumps([f"assets/foto/{name}" for name in files], ensure_ascii=False)
+          )
+          PY
+      - name: Commit & push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add assets/gallery.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Build gallery manifest"
+            git push
+          else
+            echo "No changes."
+          fi
