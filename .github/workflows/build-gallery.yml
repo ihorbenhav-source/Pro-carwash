@@ -1,4 +1,5 @@
 name: Build gallery manifest
+
 on:
   push:
     paths:
@@ -7,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write   # <-- ДАЁМ ПРАВО НА ЗАПИСЬ
+  contents: write   # даём Actions право пушить
 
 jobs:
   build:
@@ -15,20 +16,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          persist-credentials: true   # важно!
+          persist-credentials: true   # чтобы работал git push
       - name: Generate assets/gallery.json
         run: |
           python3 - <<'PY'
           import os, json, re, pathlib
+
           folder = pathlib.Path("assets/foto")
           files = [f.name for f in folder.iterdir() if f.is_file() and not f.name.startswith(".")]
+
+          # естественная сортировка: 1,2,10 вместо 1,10,2
           def key(s):
-              import re
               parts = re.split(r'(\d+)', s)
               return [int(p) if p.isdigit() else p.lower() for p in parts]
           files.sort(key=key)
+
+          out = [f"assets/foto/{name}" for name in files]
           (pathlib.Path("assets") / "gallery.json").write_text(
-              json.dumps([f"assets/foto/{name}" for name in files], ensure_ascii=False)
+              json.dumps(out, ensure_ascii=False, indent=2)
           )
           PY
       - name: Commit & push
