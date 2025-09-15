@@ -98,13 +98,14 @@
 </head>
 <body>
 
-<!-- HEADER -->
+<!-- HEADER (desktop остаётся как был) -->
 <header class="header" id="top">
   <div class="wrap bar">
     <a href="#top" class="brand" id="brandLink">
       <img src="assets/logo.png" alt="Pro Carwash Halden">
       <span>Pro Carwash Halden</span>
     </a>
+
     <nav class="nav" id="nav">
       <a href="#about">Om oss</a>
       <a href="#services">Tjenester</a>
@@ -112,8 +113,103 @@
       <a href="#gallery">Galleri</a>
       <a href="#contact">Kontakt</a>
     </nav>
+
+    <!-- ДОБАВЛЕНО: бургер-кнопка, только для мобильного -->
+    <button id="burger"
+            class="burger-btn"
+            aria-label="Meny"
+            aria-controls="nav"
+            aria-expanded="false">☰</button>
   </div>
 </header>
+
+<!-- ДОБАВЛЕНО: только мобильные стили, desktop не трогаем -->
+<style>
+  /* по умолчанию на десктопе кнопку не показываем */
+  .burger-btn{display:none}
+
+  @media (max-width: 520px){
+    /* показать бургер, расположить справа от меню/логотипа */
+    .burger-btn{
+      display:block; margin-left:12px;
+      font-size:1.8rem; line-height:1; background:transparent; border:0; color:#bfe6ff;
+      cursor:pointer; z-index:100;
+    }
+
+    /* прячем стандартную навигацию и превращаем её в выезжающую панель */
+    .header .nav{
+      display:none; /* по умолчанию скрыта */
+      position:fixed; inset:auto 0 0 auto; /* фикс справа */
+      top:0; right:0; bottom:0;
+      width:78vw; max-width:320px;
+      padding:calc(16px + env(safe-area-inset-top,0)) 18px 18px;
+      background:rgba(11,25,54,.96); backdrop-filter:blur(8px);
+      border-left:1px solid rgba(255,255,255,.08);
+      flex-direction:column; gap:14px; z-index:99;
+    }
+    /* когда открыт бургер — показываем меню */
+    body.nav-open .header .nav{ display:flex }
+
+    /* оверлей под меню (создаётся скриптом) */
+    .nav-overlay{ display:none }
+    body.nav-open .nav-overlay{
+      display:block; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:98;
+    }
+
+    /* ссылки меню крупнее для тача */
+    .header .nav a{
+      font-size:20px; padding:10px 8px; border-radius:10px;
+    }
+    .header .nav a:hover{ background:rgba(255,255,255,.10) }
+  }
+</style>
+
+<!-- ДОБАВЛЕНО: лёгкий JS — открытие/закрытие только на мобильном -->
+<script>
+  (function(){
+    const burger = document.getElementById('burger');
+    const header = document.querySelector('.header');
+
+    // создаём полупрозрачный фон под мобильное меню
+    const overlay = document.createElement('div');
+    overlay.className = 'nav-overlay';
+    document.body.appendChild(overlay);
+
+    function setOpen(open){
+      document.body.classList.toggle('nav-open', open);
+      burger.setAttribute('aria-expanded', open);
+    }
+
+    // клик по бургеру
+    burger.addEventListener('click', ()=> setOpen(!document.body.classList.contains('nav-open')));
+    // клик по фону — закрыть
+    overlay.addEventListener('click', ()=> setOpen(false));
+    // клик по пунктам меню — закрыть (на мобильном)
+    document.getElementById('nav').addEventListener('click', e=>{
+      if(e.target.matches('a')) setOpen(false);
+    });
+    // Esc — закрыть
+    document.addEventListener('keydown', e=>{
+      if(e.key === 'Escape') setOpen(false);
+    });
+    // при ресайзе на десктоп — убрать мобильное состояние
+    window.addEventListener('resize', ()=>{
+      if(window.innerWidth > 520) setOpen(false);
+    });
+
+    // вернуть «скролл к верху» по клику на логотип (как раньше)
+    const brand = document.getElementById('brandLink');
+    if(brand){
+      brand.addEventListener('click', (e)=>{
+        e.preventDefault();
+        window.scrollTo({top:0, behavior:'smooth'});
+      });
+    }
+  })();
+</script>
+
+
+
 
 <!-- HERO -->
 <section id="hero" class="hero">
@@ -409,138 +505,73 @@
 <!-- GALLERY -->
 <section id="gallery" class="section">
   <div class="wrap">
-    <h2 class="reveal">Galleri</h2>
-    <p class="lead reveal delay-1">Alle bilder fra én mappe — sortert etter filnavn. Klikk for stort bilde.</p>
+    <h2>Galleri</h2>
+    <p class="lead">Eksempelbilder fra arbeidet vårt</p>
 
-    <style>
-      /* сетка + "Загрузить ещё" + лайтбокс */
-      .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
-      .tile{position:relative;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.1);background:#0b1936}
-      .tile img{width:100%;height:200px;object-fit:cover;display:block;opacity:0;transition:opacity .3s ease}
-      .tile img.loaded{opacity:1}
-      .more{display:flex;justify-content:center;margin-top:12px}
-      .more button{background:var(--accent);color:#062644;border:0;border-radius:14px;padding:12px 16px;font-weight:900;cursor:pointer}
-      .more button:hover{filter:brightness(.95)}
-      @media (max-width:980px){.grid{grid-template-columns:repeat(2,1fr)}}
-      @media (max-width:520px){.grid{grid-template-columns:1fr}}
-      /* лайтбокс */
-      .lb{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;place-items:center;z-index:120}
-      .lb.open{display:grid;animation:fadeIn .2s ease}
-      @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-      .lb-frame{position:relative;width:min(96vw,1100px);height:min(86vh,720px);background:#0b1936;border:1px solid rgba(255,255,255,.12);border-radius:16px;overflow:hidden}
-      .lb-track{display:flex;width:100%;height:100%;transition:transform .35s ease}
-      .lb-slide{flex:0 0 100%;display:grid;place-items:center;background:#0b1936}
-      .lb-slide img{max-width:100%;max-height:100%;object-fit:contain}
-      .lb-x,.lb-prev,.lb-next{position:absolute;background:rgba(255,255,255,.22);border:0;border-radius:12px;color:#fff;font-weight:900;cursor:pointer;padding:10px 12px}
-      .lb-x{top:10px;right:10px}
-      .lb-prev{left:10px;top:50%;transform:translateY(-50%)}
-      .lb-next{right:10px;top:50%;transform:translateY(-50%)}
-      .lb-x:hover,.lb-prev:hover,.lb-next:hover{filter:brightness(1.1)}
-    </style>
-
-    <div id="galGrid" class="grid"></div>
-    <div class="more"><button id="galMore" type="button">Last inn flere</button></div>
-
-    <!-- lightbox -->
-    <div id="galLb" class="lb" aria-hidden="true">
-      <div class="lb-frame" role="dialog" aria-modal="true">
-        <button class="lb-x" id="lbX" aria-label="Lukk">×</button>
-        <div class="lb-track" id="lbTrack"></div>
-        <button class="lb-prev" id="lbPrev" aria-label="Forrige">‹</button>
-        <button class="lb-next" id="lbNext" aria-label="Neste">›</button>
+    <div class="gallery">
+      <div class="main">
+        <button class="prev">‹</button>
+        <img id="mainPhoto" src="" alt="Galleri" />
+        <button class="next">›</button>
       </div>
+      <div class="thumbs" id="thumbs"></div>
     </div>
-
-    <script>
-      // НАСТРОЙКИ
-      const MANIFEST_URL = "assets/gallery.json"; // список файлов
-      const BATCH = 24; // сколько показывать за одну порцию
-
-      const grid = document.getElementById('galGrid');
-      const btnMore = document.getElementById('galMore');
-      const lb = document.getElementById('galLb');
-      const lbTrack = document.getElementById('lbTrack');
-      const lbX = document.getElementById('lbX');
-      const lbPrev = document.getElementById('lbPrev');
-      const lbNext = document.getElementById('lbNext');
-
-      let IMAGES = [];      // список путей из JSON
-      let shown = 0;        // сколько выведено
-      let current = 0;      // индекс в лайтбоксе
-
-      // ленивое отображение
-      function imgEl(src, i){
-        const wrap = document.createElement('article');
-        wrap.className = 'tile';
-        wrap.dataset.i = i;
-        const img = document.createElement('img');
-        img.loading = 'lazy';
-        img.alt = 'Foto ' + (i+1);
-        // отложенная подстановка src + плавное появление
-        const obs = new IntersectionObserver((ents)=>{
-          ents.forEach(e=>{
-            if(e.isIntersecting){
-              img.src = src;
-              img.onload = ()=> img.classList.add('loaded');
-              obs.unobserve(wrap);
-            }
-          })
-        },{threshold: 0.1});
-        obs.observe(wrap);
-        wrap.appendChild(img);
-        wrap.addEventListener('click', ()=>openLb(i));
-        return wrap;
-      }
-
-      async function loadManifest(){
-        const res = await fetch(MANIFEST_URL);
-        IMAGES = await res.json(); // массив строк: ["assets/foto/001.jpg", ...]
-        // уже отсортировано в файле; если надо — можно перепроверить:
-        // IMAGES.sort((a,b)=>a.localeCompare(b,'en',{numeric:true}));
-        renderMore();
-      }
-
-      function renderMore(){
-        const next = Math.min(shown + BATCH, IMAGES.length);
-        for(let i=shown;i<next;i++){
-          grid.appendChild(imgEl(IMAGES[i], i));
-        }
-        shown = next;
-        if(shown >= IMAGES.length) btnMore.style.display = 'none';
-      }
-
-      // Лайтбокс
-      function openLb(i){
-        current = i;
-        lbTrack.innerHTML = IMAGES.map(src=>`<div class="lb-slide"><img src="${src}" alt=""></div>`).join('');
-        lb.classList.add('open');
-        updateLb();
-      }
-      function closeLb(){ lb.classList.remove('open'); }
-      function updateLb(){
-        const w = lbTrack.clientWidth;
-        lbTrack.style.transform = `translateX(-${current * w}px)`;
-      }
-      function prev(){ current = (current - 1 + IMAGES.length) % IMAGES.length; updateLb(); }
-      function next(){ current = (current + 1) % IMAGES.length; updateLb(); }
-
-      // события
-      btnMore.addEventListener('click', renderMore);
-      lbX.addEventListener('click', closeLb);
-      lb.addEventListener('click', e=>{ if(e.target===lb) closeLb(); });
-      lbPrev.addEventListener('click', prev);
-      lbNext.addEventListener('click', next);
-      window.addEventListener('resize', ()=>{ if(lb.classList.contains('open')) updateLb(); });
-      document.addEventListener('keydown', e=>{
-        if(!lb.classList.contains('open')) return;
-        if(e.key==='Escape') closeLb();
-        if(e.key==='ArrowLeft') prev();
-        if(e.key==='ArrowRight') next();
-      });
-
-      loadManifest();
-    </script>
   </div>
+
+  <style>
+    .gallery{display:flex;flex-direction:column;align-items:center}
+    .main{position:relative;width:100%;max-width:800px}
+    .main img{width:100%;border-radius:10px}
+    .main button{position:absolute;top:50%;transform:translateY(-50%);
+                 background:rgba(0,0,0,.5);color:#fff;font-size:2rem;
+                 border:0;border-radius:6px;padding:4px 10px;cursor:pointer}
+    .main .prev{left:10px}
+    .main .next{right:10px}
+    .thumbs{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;justify-content:center}
+    .thumbs img{width:80px;height:60px;object-fit:cover;border-radius:6px;opacity:.6;cursor:pointer}
+    .thumbs img.active{border:2px solid #69b9ff;opacity:1}
+  </style>
+
+  <script>
+    let images = [];
+    let current = 0;
+    const mainPhoto = document.getElementById("mainPhoto");
+    const thumbs = document.getElementById("thumbs");
+
+    async function loadGallery(){
+      const res = await fetch("assets/gallery.json");
+      images = await res.json();
+      if(images.length===0) return;
+
+      // показать первое фото
+      current = 0;
+      mainPhoto.src = images[0];
+
+      // миниатюры
+      thumbs.innerHTML = images.map((src,i)=>`
+        <img src="${src}" data-i="${i}" class="${i===0?'active':''}" />
+      `).join("");
+    }
+
+    function show(i){
+      current = (i+images.length)%images.length;
+      mainPhoto.src = images[current];
+      document.querySelectorAll("#thumbs img").forEach((el,idx)=>{
+        el.classList.toggle("active", idx===current);
+      });
+    }
+
+    document.querySelector(".prev").onclick = ()=>show(current-1);
+    document.querySelector(".next").onclick = ()=>show(current+1);
+    thumbs.addEventListener("click", e=>{
+      if(e.target.tagName==="IMG"){ show(Number(e.target.dataset.i)); }
+    });
+
+    // авто-смена каждые 5 секунд
+    setInterval(()=>{ if(images.length>0) show(current+1); },5000);
+
+    loadGallery();
+  </script>
 </section>
 
 
