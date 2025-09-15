@@ -99,6 +99,31 @@
 <body>
 
 <!-- ===== HEADER (ПК — без изменений; моб. меню добавлено) ===== -->
+<header class="header" id="top">
+  <div class="wrap bar">
+    <a href="#top" class="brand" id="brandLink">
+      <img src="assets/logo.png" alt="Pro Carwash Halden">
+      <span>Pro Carwash Halden</span>
+    </a>
+
+    <nav class="nav" id="nav" role="navigation" aria-label="Hovedmeny">
+      <a href="#about">Om oss</a>
+      <a href="#services">Tjenester</a>
+      <a href="#pricing">Priser</a>
+      <a href="#gallery">Galleri</a>
+      <a href="#contact">Kontakt</a>
+    </nav>
+
+    <!-- Кнопка меню — только на мобиле -->
+    <button id="burger" class="burger-btn" aria-label="Åpne meny"
+            aria-controls="nav" aria-expanded="false">
+      <span class="burger-ico">☰</span>
+      <span class="burger-text">Meny</span>
+    </button>
+  </div>
+</header>
+
+<!-- ===== ТОЛЬКО ДЛЯ МОБИЛЫ: стили и «жёсткий» оверрайд ===== -->
 <style>
   /* Порог мобилы: 768px. Десктопный вид не меняем. */
   .burger-btn{display:none}
@@ -603,9 +628,7 @@
     // кнопки
     BTN_PREV.onclick = ()=>{ stopAutoplay(); show(gi-1); startAutoplay(); };
     BTN_NEXT.onclick = ()=>{ stopAutoplay(); show(gi+1); startAutoplay(); };
-    BTN_CLOSE.onclick = ()=>{ /* просто плавно проскроллим к началу галереи */
-      const y = document.getElementById('gallery').getBoundingClientRect().top + window.pageYOffset - (document.querySelector('.header').offsetHeight+8);
-      window.scrollTo({top:y, behavior:'smooth'});
+    
     };
 
     // клики по миниатюрам
