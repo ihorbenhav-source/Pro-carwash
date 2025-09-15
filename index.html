@@ -98,7 +98,7 @@
 </head>
 <body>
 
-<!-- HEADER — desktop неизменен; мобильное меню поверх -->
+<!-- HEADER (desktop как был) -->
 <header class="header" id="top">
   <div class="wrap bar">
     <a href="#top" class="brand" id="brandLink">
@@ -114,51 +114,44 @@
       <a href="#contact">Kontakt</a>
     </nav>
 
-    <!-- бургер, виден только на мобиле -->
+    <!-- бургер — только на мобилке -->
     <button id="burger" class="burger-btn" aria-label="Meny" aria-controls="nav" aria-expanded="false">
-      <!-- простая иконка -->
+      <!-- иконка-гамбургер -->
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M3 6h18M3 12h18M3 18h18" stroke="#bfe6ff" stroke-width="2" stroke-linecap="round"/>
+        <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
       </svg>
     </button>
   </div>
 </header>
 
+<!-- мобильные стили (десктоп не трогаем) -->
 <style>
-  /* Кнопка бургера скрыта на десктопе */
-  .burger-btn{display:none;background:transparent;border:0;padding:6px;cursor:pointer}
+  .burger-btn{display:none;color:#bfe6ff;background:transparent;border:0;cursor:pointer}
 
-  /* Мобильное меню — только до 520px, внешний вид «аккуратная панель» */
-  @media (max-width:520px){
+  @media (max-width: 520px){
     .burger-btn{display:block;margin-left:10px;z-index:110}
 
+    /* панель меню */
     .header .nav{
-      display:none;
-      position:fixed; top:0; right:0; bottom:0; width:78vw; max-width:320px;
-      padding: calc(16px + env(safe-area-inset-top,0)) 18px 18px;
-      background: linear-gradient(180deg, rgba(11,25,54,.96), rgba(11,25,54,.92));
-      backdrop-filter: blur(8px);
-      border-left:1px solid rgba(255,255,255,.08);
-      box-shadow:-12px 0 24px rgba(0,0,0,.35);
-      flex-direction:column; gap:12px; z-index:109;
-      transform: translateX(100%); transition: transform .25s ease;
+      display:none; position:fixed; top:0; right:0; bottom:0; width:82vw; max-width:360px;
+      padding:18px 18px 22px; background:rgba(11,25,54,.97); backdrop-filter:blur(10px);
+      border-left:1px solid rgba(255,255,255,.08); box-shadow:-8px 0 24px rgba(0,0,0,.35);
+      flex-direction:column; gap:10px; z-index:109; border-top-left-radius:16px; border-bottom-left-radius:16px;
+      transform:translateX(12px); transition:opacity .2s ease, transform .2s ease;
     }
-    body.nav-open .header .nav{ display:flex; transform: translateX(0); }
+    body.nav-open .header .nav{ display:flex; transform:none }
 
-    /* фон под меню */
-    .nav-overlay{display:none}
-    body.nav-open .nav-overlay{
-      display:block; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:108;
-      animation: fadeIn .2s ease;
-    }
-    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-
-    /* Ссылки — крупные и кликабельные */
     .header .nav a{
-      color:#bfe6ff; text-decoration:none; font-weight:800;
-      font-size:20px; padding:12px 10px; border-radius:10px;
+      font-size:20px; font-weight:800; color:#cfe3fb; text-decoration:none; padding:12px 10px; border-radius:10px;
     }
-    .header .nav a:hover{ background:rgba(255,255,255,.10); }
+    .header .nav a:hover{ background:rgba(255,255,255,.10) }
+    .header .nav a.active{ background:rgba(105,185,255,.15); color:#e8f1ff; outline:1px solid rgba(105,185,255,.35) }
+
+    /* затемнение фона под меню */
+    .nav-overlay{ display:none }
+    body.nav-open .nav-overlay{
+      display:block; position:fixed; inset:0; background:rgba(0,0,0,.48); z-index:108;
+    }
   }
 </style>
 
@@ -166,54 +159,56 @@
   (function(){
     const burger = document.getElementById('burger');
     const nav = document.getElementById('nav');
+    const header = document.querySelector('.header');
 
-    // фон под меню (для клика «закрыть»)
-    let overlay = document.querySelector('.nav-overlay');
-    if(!overlay){ overlay = document.createElement('div'); overlay.className='nav-overlay'; document.body.appendChild(overlay); }
+    // фон под меню
+    const overlay = document.createElement('div');
+    overlay.className = 'nav-overlay';
+    document.body.appendChild(overlay);
 
     function setOpen(open){
       document.body.classList.toggle('nav-open', open);
       burger.setAttribute('aria-expanded', open);
     }
 
-    // открыть/закрыть
+    // бургер
     burger.addEventListener('click', ()=> setOpen(!document.body.classList.contains('nav-open')));
     overlay.addEventListener('click', ()=> setOpen(false));
-    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') setOpen(false); });
 
-    // Умный скролл по якорям (учитываем высоту шапки)
+    // плавный скролл с учётом высоты шапки (работает и из моб.меню)
     function smartScrollTo(hash){
-      const header = document.querySelector('.header');
       const el = document.querySelector(hash);
       if(!el) return;
       const y = el.getBoundingClientRect().top + window.pageYOffset - (header.offsetHeight + 8);
-      window.scrollTo({ top: y, behavior: 'smooth' });
+      window.scrollTo({top:y, behavior:'smooth'});
     }
 
-    // Рабочие ссылки в меню на мобиле
+    // клики по пунктам меню
     nav.addEventListener('click', (e)=>{
       const a = e.target.closest('a[href^="#"]');
       if(!a) return;
       e.preventDefault();
+      const hash = a.getAttribute('href');
       setOpen(false);
-      smartScrollTo(a.getAttribute('href'));
+      smartScrollTo(hash);
+      // активный пункт
+      [...nav.querySelectorAll('a')].forEach(x=>x.classList.toggle('active', x===a));
     });
 
-    // На десктопе — оставляем как было (если у вас уже есть подобная логика — она не ломается)
+    // логотип — наверх
     const brand = document.getElementById('brandLink');
     if(brand){
       brand.addEventListener('click', (e)=>{
         e.preventDefault();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setOpen(false);
+        window.scrollTo({top:0, behavior:'smooth'});
       });
     }
 
-    // если случайно оставили меню открытым и развернули экран — закрыть
-    window.addEventListener('resize', ()=>{ if(window.innerWidth>520) setOpen(false); });
+    // если растянули экран — закрыть моб.меню
+    window.addEventListener('resize', ()=>{ if(window.innerWidth > 520) setOpen(false); });
   })();
 </script>
-
-
 
 
 <!-- HERO -->
@@ -513,71 +508,104 @@
     <h2>Galleri</h2>
     <p class="lead">Eksempelbilder fra arbeidet vårt</p>
 
-    <div class="gallery">
-      <div class="main">
-        <button class="prev">‹</button>
-        <img id="mainPhoto" src="" alt="Galleri" />
-        <button class="next">›</button>
+    <div class="pcw-slider">
+      <div class="pcw-main">
+        <button class="pcw-prev" aria-label="Forrige">‹</button>
+        <img id="pcwMain" src="" alt="Galleri-bilde">
+        <button class="pcw-next" aria-label="Neste">›</button>
       </div>
-      <div class="thumbs" id="thumbs"></div>
+      <div class="pcw-thumbs" id="pcwThumbs"></div>
     </div>
   </div>
 
   <style>
-    .gallery{display:flex;flex-direction:column;align-items:center}
-    .main{position:relative;width:100%;max-width:800px}
-    .main img{width:100%;border-radius:10px}
-    .main button{position:absolute;top:50%;transform:translateY(-50%);
-                 background:rgba(0,0,0,.5);color:#fff;font-size:2rem;
-                 border:0;border-radius:6px;padding:4px 10px;cursor:pointer}
-    .main .prev{left:10px}
-    .main .next{right:10px}
-    .thumbs{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;justify-content:center}
-    .thumbs img{width:80px;height:60px;object-fit:cover;border-radius:6px;opacity:.6;cursor:pointer}
-    .thumbs img.active{border:2px solid #69b9ff;opacity:1}
+    .pcw-slider{display:flex;flex-direction:column;align-items:center;gap:10px}
+    .pcw-main{position:relative;width:100%;max-width:980px;min-height:200px;background:#0b1936;border-radius:12px;border:1px solid rgba(255,255,255,.1)}
+    .pcw-main img{
+      width:100%;
+      height:auto;
+      max-height:70vh;           /* не выше 70% экрана */
+      object-fit:contain;        /* показываем целиком, без обрезки */
+      display:block;
+      border-radius:12px;
+      background:#0b1936;        /* «рамка» вокруг разных пропорций */
+    }
+    .pcw-prev, .pcw-next{
+      position:absolute; top:50%; transform:translateY(-50%);
+      background:rgba(0,0,0,.45); color:#fff; border:0; border-radius:10px;
+      font-size:1.8rem; line-height:1; padding:8px 12px; cursor:pointer
+    }
+    .pcw-prev{left:10px} .pcw-next{right:10px}
+    .pcw-prev:hover, .pcw-next:hover{filter:brightness(1.1)}
+
+    /* миниатюры — без обрезки по высоте */
+    .pcw-thumbs{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:980px}
+    .pcw-thumbs img{
+      width:92px; height:auto;   /* авто-рост по высоте */
+      max-height:68px;           /* ограничиваем, но не обрезаем */
+      object-fit:contain;        /* показываем целиком */
+      background:#0b1936;
+      border-radius:8px; border:1px solid rgba(255,255,255,.15);
+      opacity:.75; cursor:pointer; transition:opacity .2s ease, transform .2s ease
+    }
+    .pcw-thumbs img:hover{opacity:.95; transform:translateY(-1px)}
+    .pcw-thumbs img.active{opacity:1; outline:2px solid #69b9ff}
+
+    @media (max-width:520px){
+      .pcw-prev, .pcw-next{font-size:1.6rem; padding:6px 10px}
+      .pcw-thumbs img{width:76px; max-height:56px}
+    }
   </style>
 
   <script>
-    let images = [];
-    let current = 0;
-    const mainPhoto = document.getElementById("mainPhoto");
-    const thumbs = document.getElementById("thumbs");
+    let G = [];    // список картинок из JSON
+    let gi = 0;    // текущий индекс
+    const mainImg = document.getElementById('pcwMain');
+    const thumbs  = document.getElementById('pcwThumbs');
 
     async function loadGallery(){
-      const res = await fetch("assets/gallery.json");
-      images = await res.json();
-      if(images.length===0) return;
+      try{
+        const res = await fetch('assets/gallery.json', {cache:'no-store'});
+        G = await res.json();
+      }catch(e){ G = []; }
+      if(!Array.isArray(G) || G.length===0) return;
+      gi = 0;
+      render();
+      autoPlay();
+    }
 
-      // показать первое фото
-      current = 0;
-      mainPhoto.src = images[0];
-
-      // миниатюры
-      thumbs.innerHTML = images.map((src,i)=>`
-        <img src="${src}" data-i="${i}" class="${i===0?'active':''}" />
-      `).join("");
+    function render(){
+      mainImg.src = G[gi];
+      thumbs.innerHTML = G.map((src,idx)=>`<img src="${src}" data-i="${idx}" class="${idx===gi?'active':''}" alt="mini">`).join('');
     }
 
     function show(i){
-      current = (i+images.length)%images.length;
-      mainPhoto.src = images[current];
-      document.querySelectorAll("#thumbs img").forEach((el,idx)=>{
-        el.classList.toggle("active", idx===current);
-      });
+      if(!G.length) return;
+      gi = (i + G.length) % G.length;
+      mainImg.src = G[gi];
+      // активная миниатюра
+      [...thumbs.querySelectorAll('img')].forEach((t,idx)=> t.classList.toggle('active', idx===gi));
     }
 
-    document.querySelector(".prev").onclick = ()=>show(current-1);
-    document.querySelector(".next").onclick = ()=>show(current+1);
-    thumbs.addEventListener("click", e=>{
-      if(e.target.tagName==="IMG"){ show(Number(e.target.dataset.i)); }
+    document.querySelector('.pcw-prev').onclick = ()=> show(gi-1);
+    document.querySelector('.pcw-next').onclick = ()=> show(gi+1);
+    thumbs.addEventListener('click', e=>{
+      const t = e.target.closest('img[data-i]'); if(!t) return;
+      show(Number(t.dataset.i));
     });
 
-    // авто-смена каждые 5 секунд
-    setInterval(()=>{ if(images.length>0) show(current+1); },5000);
+    // авто-смена раз в 6 сек (останавливается при невидимости вкладки)
+    let timer;
+    function autoPlay(){
+      clearInterval(timer);
+      timer = setInterval(()=>{ if(document.visibilityState==='visible') show(gi+1); }, 6000);
+    }
+    document.addEventListener('visibilitychange', autoPlay);
 
     loadGallery();
   </script>
 </section>
+
 
 
 <!-- CONTACT -->
