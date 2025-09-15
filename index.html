@@ -551,71 +551,104 @@
     <h2>Galleri</h2>
     <p class="lead">Eksempelbilder fra arbeidet vårt</p>
 
-    <div class="gallery">
-      <div class="main">
-        <button class="prev">‹</button>
-        <img id="mainPhoto" src="" alt="Galleri" />
-        <button class="next">›</button>
+    <div class="pcw-slider">
+      <div class="pcw-main">
+        <button class="pcw-prev" aria-label="Forrige">‹</button>
+        <img id="pcwMain" src="" alt="Galleri-bilde">
+        <button class="pcw-next" aria-label="Neste">›</button>
       </div>
-      <div class="thumbs" id="thumbs"></div>
+      <div class="pcw-thumbs" id="pcwThumbs"></div>
     </div>
   </div>
 
   <style>
-    .gallery{display:flex;flex-direction:column;align-items:center}
-    .main{position:relative;width:100%;max-width:800px}
-    .main img{width:100%;border-radius:10px}
-    .main button{position:absolute;top:50%;transform:translateY(-50%);
-                 background:rgba(0,0,0,.5);color:#fff;font-size:2rem;
-                 border:0;border-radius:6px;padding:4px 10px;cursor:pointer}
-    .main .prev{left:10px}
-    .main .next{right:10px}
-    .thumbs{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;justify-content:center}
-    .thumbs img{width:80px;height:60px;object-fit:cover;border-radius:6px;opacity:.6;cursor:pointer}
-    .thumbs img.active{border:2px solid #69b9ff;opacity:1}
+    .pcw-slider{display:flex;flex-direction:column;align-items:center;gap:10px}
+    .pcw-main{position:relative;width:100%;max-width:980px;min-height:200px;background:#0b1936;border-radius:12px;border:1px solid rgba(255,255,255,.1)}
+    .pcw-main img{
+      width:100%;
+      height:auto;
+      max-height:70vh;           /* не выше 70% экрана */
+      object-fit:contain;        /* показываем целиком, без обрезки */
+      display:block;
+      border-radius:12px;
+      background:#0b1936;        /* «рамка» вокруг разных пропорций */
+    }
+    .pcw-prev, .pcw-next{
+      position:absolute; top:50%; transform:translateY(-50%);
+      background:rgba(0,0,0,.45); color:#fff; border:0; border-radius:10px;
+      font-size:1.8rem; line-height:1; padding:8px 12px; cursor:pointer
+    }
+    .pcw-prev{left:10px} .pcw-next{right:10px}
+    .pcw-prev:hover, .pcw-next:hover{filter:brightness(1.1)}
+
+    /* миниатюры — без обрезки по высоте */
+    .pcw-thumbs{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:980px}
+    .pcw-thumbs img{
+      width:92px; height:auto;   /* авто-рост по высоте */
+      max-height:68px;           /* ограничиваем, но не обрезаем */
+      object-fit:contain;        /* показываем целиком */
+      background:#0b1936;
+      border-radius:8px; border:1px solid rgba(255,255,255,.15);
+      opacity:.75; cursor:pointer; transition:opacity .2s ease, transform .2s ease
+    }
+    .pcw-thumbs img:hover{opacity:.95; transform:translateY(-1px)}
+    .pcw-thumbs img.active{opacity:1; outline:2px solid #69b9ff}
+
+    @media (max-width:520px){
+      .pcw-prev, .pcw-next{font-size:1.6rem; padding:6px 10px}
+      .pcw-thumbs img{width:76px; max-height:56px}
+    }
   </style>
 
   <script>
-    let images = [];
-    let current = 0;
-    const mainPhoto = document.getElementById("mainPhoto");
-    const thumbs = document.getElementById("thumbs");
+    let G = [];    // список картинок из JSON
+    let gi = 0;    // текущий индекс
+    const mainImg = document.getElementById('pcwMain');
+    const thumbs  = document.getElementById('pcwThumbs');
 
     async function loadGallery(){
-      const res = await fetch("assets/gallery.json");
-      images = await res.json();
-      if(images.length===0) return;
+      try{
+        const res = await fetch('assets/gallery.json', {cache:'no-store'});
+        G = await res.json();
+      }catch(e){ G = []; }
+      if(!Array.isArray(G) || G.length===0) return;
+      gi = 0;
+      render();
+      autoPlay();
+    }
 
-      // показать первое фото
-      current = 0;
-      mainPhoto.src = images[0];
-
-      // миниатюры
-      thumbs.innerHTML = images.map((src,i)=>`
-        <img src="${src}" data-i="${i}" class="${i===0?'active':''}" />
-      `).join("");
+    function render(){
+      mainImg.src = G[gi];
+      thumbs.innerHTML = G.map((src,idx)=>`<img src="${src}" data-i="${idx}" class="${idx===gi?'active':''}" alt="mini">`).join('');
     }
 
     function show(i){
-      current = (i+images.length)%images.length;
-      mainPhoto.src = images[current];
-      document.querySelectorAll("#thumbs img").forEach((el,idx)=>{
-        el.classList.toggle("active", idx===current);
-      });
+      if(!G.length) return;
+      gi = (i + G.length) % G.length;
+      mainImg.src = G[gi];
+      // активная миниатюра
+      [...thumbs.querySelectorAll('img')].forEach((t,idx)=> t.classList.toggle('active', idx===gi));
     }
 
-    document.querySelector(".prev").onclick = ()=>show(current-1);
-    document.querySelector(".next").onclick = ()=>show(current+1);
-    thumbs.addEventListener("click", e=>{
-      if(e.target.tagName==="IMG"){ show(Number(e.target.dataset.i)); }
+    document.querySelector('.pcw-prev').onclick = ()=> show(gi-1);
+    document.querySelector('.pcw-next').onclick = ()=> show(gi+1);
+    thumbs.addEventListener('click', e=>{
+      const t = e.target.closest('img[data-i]'); if(!t) return;
+      show(Number(t.dataset.i));
     });
 
-    // авто-смена каждые 5 секунд
-    setInterval(()=>{ if(images.length>0) show(current+1); },5000);
+    // авто-смена раз в 6 сек (останавливается при невидимости вкладки)
+    let timer;
+    function autoPlay(){
+      clearInterval(timer);
+      timer = setInterval(()=>{ if(document.visibilityState==='visible') show(gi+1); }, 6000);
+    }
+    document.addEventListener('visibilitychange', autoPlay);
 
     loadGallery();
   </script>
 </section>
+
 
 
 <!-- CONTACT -->
