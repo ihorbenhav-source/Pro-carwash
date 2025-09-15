@@ -98,7 +98,7 @@
 </head>
 <body>
 
-<!-- HEADER (desktop как был; добавлен только мобильный бургер) -->
+<!-- HEADER (desktop как было, мобильное меню добавлено) -->
 <header class="header" id="top">
   <div class="wrap bar">
     <a href="#top" class="brand" id="brandLink">
@@ -114,7 +114,7 @@
       <a href="#contact">Kontakt</a>
     </nav>
 
-    <!-- КНОПКА МЕНЮ — только на мобилке -->
+    <!-- Кнопка меню — видна только на мобильном -->
     <button id="burger" class="burger-btn" aria-label="Åpne meny"
             aria-controls="nav" aria-expanded="false">
       <span class="burger-ico">☰</span>
@@ -123,7 +123,7 @@
   </div>
 </header>
 
-<!-- Мобильные стили (desktop не затрагиваем) -->
+<!-- Только мобильные стили (десктоп не затрагивают) -->
 <style>
   .burger-btn{display:none}
 
@@ -131,14 +131,14 @@
     .burger-btn{
       display:flex; align-items:center; gap:8px;
       padding:10px 14px; border:1.5px solid rgba(105,185,255,.6);
-      border-radius:999px; background:rgba(11,25,54,.85);
+      border-radius:999px; background:rgba(11,25,54,.9);
       color:#cfe3fb; font-weight:800; cursor:pointer; z-index:110;
-      box-shadow:0 6px 18px rgba(0,0,0,.25);
+      box-shadow:0 6px 18px rgba(0,0,0,.25)
     }
-    .burger-ico{font-size:1.2rem; line-height:1}
-    .burger-text{font-size:1rem; line-height:1}
+    .burger-ico{font-size:1.2rem}
+    .burger-text{font-size:1rem}
 
-    /* Панель мобильного меню (выезжает справа) */
+    /* Мобильная панель меню (по умолчанию скрыта) */
     .header .nav{
       display:none; position:fixed; top:0; right:0; bottom:0;
       width:84vw; max-width:360px; padding:18px 18px 22px;
@@ -152,7 +152,6 @@
     }
     body.nav-open .header .nav{ display:flex; transform:none; opacity:1 }
 
-    /* Пункты — крупные, «кнопочками» */
     .header .nav a{
       display:block; font-size:20px; font-weight:900;
       color:#e8f1ff; text-decoration:none;
@@ -161,7 +160,7 @@
     .header .nav a:hover{ background:rgba(255,255,255,.10) }
     .header .nav a.active{ background:rgba(105,185,255,.15); outline:1px solid rgba(105,185,255,.35) }
 
-    /* Фон под меню */
+    /* Фон под панелью */
     .nav-overlay{ display:none }
     body.nav-open .nav-overlay{
       display:block; position:fixed; inset:0; background:rgba(0,0,0,.48); z-index:108;
@@ -170,54 +169,64 @@
 </style>
 
 <script>
-  (function(){
-    const header = document.querySelector('.header');
-    const nav = document.getElementById('nav');
-    const burger = document.getElementById('burger');
+(function(){
+  const header = document.querySelector('.header');
+  const nav    = document.getElementById('nav');
+  const burger = document.getElementById('burger');
 
-    // полупрозрачный фон
-    let overlay = document.querySelector('.nav-overlay');
-    if(!overlay){ overlay = document.createElement('div'); overlay.className='nav-overlay'; document.body.appendChild(overlay); }
+  // полупрозрачный фон для мобильного меню
+  let overlay = document.querySelector('.nav-overlay');
+  if(!overlay){
+    overlay = document.createElement('div');
+    overlay.className = 'nav-overlay';
+    document.body.appendChild(overlay);
+  }
 
-    function openMenu(open){
-      document.body.classList.toggle('nav-open', open);
-      burger.setAttribute('aria-expanded', open);
-    }
+  function openMenu(open){
+    document.body.classList.toggle('nav-open', open);
+    if(burger) burger.setAttribute('aria-expanded', open);
+  }
 
-    // клик по бургеру / фону
+  // показать/скрыть меню
+  if(burger){
     burger.addEventListener('click', ()=> openMenu(!document.body.classList.contains('nav-open')));
-    overlay.addEventListener('click', ()=> openMenu(false));
+  }
+  overlay.addEventListener('click', ()=> openMenu(false));
 
-    // ПЛАВНЫЙ СКРОЛЛ + РАБОТА С ЯКОРЯМИ НА МОБИЛКЕ
-    function smartScrollTo(hash){
-      const el = document.querySelector(hash);
-      if(!el) return;
-      const y = el.getBoundingClientRect().top + window.pageYOffset - (header.offsetHeight + 8);
-      window.scrollTo({ top:y, behavior:'smooth' });
-    }
+  // плавный скролл к секциям с учётом фикс-шапки
+  function smartScrollTo(hash){
+    const el = document.querySelector(hash);
+    if(!el) return;
+    const y = el.getBoundingClientRect().top + window.pageYOffset - (header.offsetHeight + 8);
+    window.scrollTo({ top:y, behavior:'smooth' });
+  }
 
-    // Обрабатываем клики по пунктам, чтобы якоря работали стабильно
-    nav.addEventListener('click', (e)=>{
-      const link = e.target.closest('a[href^="#"]');
-      if(!link) return;
+  // обработка кликов по пунктам меню (чтобы реально переходило)
+  nav.addEventListener('click', (e)=>{
+    const link = e.target.closest('a[href^="#"]');
+    if(!link) return;
+    e.preventDefault();
+    const hash = link.getAttribute('href');
+    openMenu(false);
+    smartScrollTo(hash);
+    // подсветка активного пункта
+    [...nav.querySelectorAll('a')].forEach(a=>a.classList.toggle('active', a===link));
+  });
+
+  // логотип — скролл к верху
+  const brand = document.getElementById('brandLink');
+  if(brand){
+    brand.addEventListener('click', (e)=>{
       e.preventDefault();
-      const hash = link.getAttribute('href');
       openMenu(false);
-      smartScrollTo(hash);
-      // подсветка активного пункта в панели
-      [...nav.querySelectorAll('a')].forEach(a=>a.classList.toggle('active', a===link));
+      window.scrollTo({ top:0, behavior:'smooth' });
     });
+  }
 
-    // Логотип — к самому верху
-    const brand = document.getElementById('brandLink');
-    if(brand){
-      brand.addEventListener('click', (e)=>{ e.preventDefault(); openMenu(false); window.scrollTo({top:0, behavior:'smooth'}); });
-    }
-
-    // Esc закрывает меню; при переходе на десктоп — выключить мобильное состояние
-    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') openMenu(false); });
-    window.addEventListener('resize', ()=>{ if(window.innerWidth>520) openMenu(false); });
-  })();
+  // Esc закрывает меню; при расширении экрана — сбрасываем мобильное состояние
+  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') openMenu(false); });
+  window.addEventListener('resize', ()=>{ if(window.innerWidth > 520) openMenu(false); });
+})();
 </script>
 
 
