@@ -1,104 +1,4 @@
-<!doctype html>
-<html lang="no">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Pro Carwash Halden — Bilpleie i Halden</title>
-<meta name="description" content="Pro Carwash Halden. Profesjonell bilvask og detailing i Halden.">
-<style>
-  :root{
-    --bg:#0b1936; --ink:#e8f1ff; --muted:#a9bed8;
-    --soft-blue:#bfe6ff; --accent:#69b9ff; --wrap:1120px;
-  }
-  *{box-sizing:border-box} html{scroll-behavior:smooth}
-  body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Arial;background:var(--bg);color:var(--ink)}
-  .wrap{width:min(var(--wrap),calc(100% - 32px));margin:0 auto}
-
-  /* HEADER — на обложке */
-  .header{position:fixed;top:0;left:0;right:0;z-index:80;background:transparent;border-bottom:0}
-  .bar{display:flex;align-items:center;gap:18px;padding:16px 0}
-  .brand{display:flex;align-items:center;gap:12px;text-decoration:none}
-  .brand img{
-    width:140px;height:140px;border-radius:16px;object-fit:contain;
-    opacity:1;mix-blend-mode:normal;background:transparent; /* прозрачное лого */
-  }
-  .brand span{display:none}
-  .nav{display:flex;gap:10px;margin-left:auto}
-  .nav a{
-    position:relative;padding:12px 16px 14px;border-radius:12px;text-decoration:none;
-    font-weight:900;letter-spacing:.02em;font-size:clamp(18px,2.2vw,28px);color:var(--soft-blue)
-  }
-  .nav a:hover{background:rgba(255,255,255,.12)}
-  .nav a.active::after{content:'';position:absolute;left:16px;right:16px;bottom:6px;height:2px;background:var(--accent);border-radius:2px}
-
-  /* Кнопки — спокойные */
-  .btn{display:inline-block;border:0;border-radius:14px;padding:14px 18px;font-weight:900;text-decoration:none;text-align:center;cursor:pointer;transition:filter .2s}
-  .btn-primary{background:var(--accent);color:#062644}
-  .btn-primary:hover{filter:brightness(.95)}
-  .btn-ghost{border:1.5px solid var(--accent);color:var(--accent);background:transparent}
-  .btn-ghost:hover{background:rgba(105,185,255,.14)}
-  .btn-lg{padding:16px 22px;font-size:1.05rem;border-radius:16px}
-
-  /* HERO — обложка под шапкой, без правого блока и без бейджа Halden */
-  .hero{
-    position:relative;min-height:72vh;
-    background:
-      linear-gradient(180deg, rgba(11,25,54,.58), rgba(11,25,54,.62)),
-      url('assets/cover.jpg') center/cover no-repeat;
-  }
-  .hero::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:60px;background:linear-gradient(180deg,rgba(11,25,54,0),rgba(11,25,54,.35) 55%,rgba(11,25,54,.6))}
-  .hero .inner{display:grid;grid-template-columns:1fr;gap:22px;align-items:end;padding:calc(160px + 2vh) 0 84px}
-  .hero h1{margin:12px 0 10px;font-size:clamp(32px,5vw,56px);line-height:1.06}
-  .hero p{margin:0 0 18px;color:#d9ebff;max-width:720px}
-  .cta-row{display:flex;gap:14px;flex-wrap:wrap}
-
-  /* Секции */
-  section{background:transparent}
-  .section{padding:56px 0;border-top:1px solid rgba(255,255,255,.06)}
-  h2{margin:0 0 12px;font-size:clamp(22px,3.2vw,34px)}
-  .lead{color:#c4d6ee;max-width:860px}
-
-  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-  .card{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.10);border-radius:16px;padding:16px}
-  .card h3{margin:0 0 6px;font-size:1.1rem}
-  .muted{color:#a9bed8}
-
-  .gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-  .gallery img{width:100%;height:200px;object-fit:cover;border-radius:14px;border:1px solid rgba(255,255,255,.1)}
-
-  .contact{display:grid;grid-template-columns:1.2fr 1fr;gap:16px;align-items:start}
-  .map iframe{width:100%;height:280px;border:0;border-radius:16px;border:1px solid rgba(255,255,255,.1)}
-
-  .footer{border-top:1px solid rgba(255,255,255,.06);background:linear-gradient(180deg,transparent,#061430 30%)}
-  .footer .wrap{padding:18px 0;display:flex;justify-content:space-between;align-items:center;color:#cfe3fb}
-
-  /* Плавающая кнопка */
-  .floating{position:fixed;right:16px;bottom:16px;z-index:90;background:var(--accent);color:#062644;border-radius:18px;padding:16px 22px;font-weight:900;text-decoration:none;border:0}
-  .floating:hover{filter:brightness(.95)}
-
-  /* Анимация появления */
-  .reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease, transform .6s ease}
-  .reveal.in{opacity:1;transform:none}
-  .delay-1{transition-delay:.1s}.delay-2{transition-delay:.2s}.delay-3{transition-delay:.3s}
-
-  @media (max-width:980px){
-    .grid-3{grid-template-columns:1fr 1fr}
-    .gallery{grid-template-columns:1fr 1fr}
-    .contact{grid-template-columns:1fr}
-    .brand img{width:110px;height:110px}
-    .hero .inner{padding:calc(130px + 2vh) 0 64px}
-  }
-  @media (max-width:520px){
-    .nav{display:none}
-    .grid-3,.gallery{grid-template-columns:1fr}
-    .btn-lg{width:100%}
-    .brand img{width:96px;height:96px}
-  }
-</style>
-</head>
-<body>
-
-<!-- ===== HEADER (Desktop как было; мобильное меню добавлено) ===== -->
+<!-- ===== HEADER (ПК — без изменений; моб. меню добавлено) ===== -->
 <header class="header" id="top">
   <div class="wrap bar">
     <a href="#top" class="brand" id="brandLink">
@@ -114,7 +14,7 @@
       <a href="#contact">Kontakt</a>
     </nav>
 
-    <!-- Кнопка меню — видна только на мобильном -->
+    <!-- Кнопка меню — только на мобиле -->
     <button id="burger" class="burger-btn" aria-label="Åpne meny"
             aria-controls="nav" aria-expanded="false">
       <span class="burger-ico">☰</span>
@@ -123,12 +23,12 @@
   </div>
 </header>
 
-<!-- ===== ТОЛЬКО МОБИЛЬНЫЕ СТИЛИ (ПК не трогаем) ===== -->
+<!-- ===== ТОЛЬКО ДЛЯ МОБИЛЫ: стили и «жёсткий» оверрайд ===== -->
 <style>
   .burger-btn{display:none}
 
-  /* Порог мобильной версии — можно поменять на 768/992 при желании */
-  @media (max-width: 840px){
+  /* Порог моб-версии: можно сменить на 768/992 при желании */
+  @media (max-width:840px){
     .burger-btn{
       display:flex; align-items:center; gap:8px;
       padding:10px 14px; border:1.5px solid rgba(105,185,255,.6);
@@ -139,7 +39,7 @@
     .burger-ico{font-size:1.2rem}
     .burger-text{font-size:1rem}
 
-    /* Панель мобильного меню (скрыта по умолчанию) */
+    /* Панель меню (по умолчанию скрыта) */
     .header .nav{
       display:none; position:fixed; top:0; right:0; bottom:0;
       width:84vw; max-width:360px; padding:18px 18px 22px;
@@ -151,7 +51,8 @@
       transform:translateX(12px); opacity:0;
       transition:transform .2s ease, opacity .2s ease;
     }
-    body.nav-open .header .nav{ display:flex; transform:none; opacity:1 }
+    /* Открытое меню — показываем, перекрываем любые ранние правила */
+    body.nav-open .header .nav{ display:flex !important; transform:none; opacity:1 }
 
     .header .nav a{
       display:block; font-size:20px; font-weight:900;
@@ -169,7 +70,7 @@
   }
 </style>
 
-<!-- ===== ЛОГИКА МЕНЮ (плавный скролл и работа якорей) ===== -->
+<!-- ===== ЛОГИКА МЕНЮ (скролл с учётом шапки, защита от конфликтов) ===== -->
 <script>
 (function(){
   var header = document.querySelector('.header');
@@ -191,7 +92,7 @@
     if(burger) burger.setAttribute('aria-expanded', !!open);
   }
 
-  // показать/скрыть меню
+  // бургер и закрытие по фону
   if(burger){
     burger.addEventListener('click', function(){
       setOpen(!document.body.classList.contains('nav-open'));
@@ -199,34 +100,42 @@
   }
   overlay.addEventListener('click', function(){ setOpen(false); });
 
-  // плавный скролл к секции (учитываем фикс-шапку)
+  // плавный скролл к секции (с фикс-отступом под шапку)
   function smartScrollTo(hash){
     if(!hash) return;
     var id = hash.charAt(0)==='#' ? hash.slice(1) : hash;
     var el = document.getElementById(id) || document.querySelector('#'+CSS.escape(id));
     if(el){
-      var y = el.getBoundingClientRect().top + window.pageYOffset - (header.offsetHeight + 8);
-      window.scrollTo({ top:y, behavior:'smooth' });
+      // ждём кадр, чтобы меню успело закрыться/перерисоваться
+      requestAnimationFrame(function(){
+        var y = el.getBoundingClientRect().top + window.pageYOffset - (header.offsetHeight + 8);
+        window.scrollTo({ top:y, behavior:'smooth' });
+      });
     }else{
       location.hash = '#'+id;
     }
   }
 
-  // клики по пунктам меню — ЗАКРЫТЬ и ПРОСКРОЛЛИТЬ (в capture, чтобы обойти чужие хендлеры)
+  // КЛИКИ ПО ПУНКТАМ МЕНЮ: закрыть и проскроллить
+  // capture + stopImmediatePropagation — чтобы перебить любые другие обработчики
   nav.addEventListener('click', function(e){
     var link = e.target.closest && e.target.closest('a[href^="#"]');
     if(!link) return;
     e.preventDefault();
+    e.stopPropagation();
+    if(e.stopImmediatePropagation) e.stopImmediatePropagation();
+
     var hash = link.getAttribute('href');
     setOpen(false);
     setTimeout(function(){ smartScrollTo(hash); }, 30);
-    // подсветка активного пункта в панели
+
+    // подсветка активного пункта
     [].forEach.call(nav.querySelectorAll('a'), function(a){
       a.classList.toggle('active', a === link);
     });
   }, true);
 
-  // Логотип — к самому верху
+  // логотип — к самому верху
   var brand = document.getElementById('brandLink');
   if(brand){
     brand.addEventListener('click', function(e){
@@ -236,500 +145,8 @@
     }, true);
   }
 
-  // Esc закрывает; при переходе на десктоп — сбрасываем мобильное состояние
+  // Esc закрывает; на десктоп — сброс состояния
   document.addEventListener('keydown', function(e){ if(e.key==='Escape') setOpen(false); });
   window.addEventListener('resize', function(){ if(window.innerWidth > 840) setOpen(false); });
 })();
 </script>
-
-
-
-<!-- HERO -->
-<section id="hero" class="hero">
-  <div class="wrap inner">
-    <div class="reveal">
-      <!-- Бейдж Halden убран -->
-      <h1>Bilpleie med showrom-finish</h1>
-      <p>Rask og nøye bilvask, interiør, polering og premium detailing.</p>
-      <div class="cta-row">
-        <a class="btn btn-primary btn-lg" href="#contact">Bestill time</a>
-        <!-- Кнопка Se priser убрана -->
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- WHY US -->
-<section id="about" class="section">
-  <div class="wrap">
-    <h2 class="reveal">Hvorfor oss</h2>
-    <p class="lead class reveal delay-1">Moderne utstyr + erfaring = ren og blank bil som varer lenger.</p>
-    <div class="grid-3">
-      <div class="card reveal delay-1"><h3>Skånsom håndvask</h3><p class="muted">Riktig kjemi og teknikk</p></div>
-      <div class="card reveal delay-2"><h3>Erfarne teknikere</h3><p class="muted">Nøyaktig finish</p></div>
-      <div class="card reveal delay-3"><h3>Rask service</h3><p class="muted">Tydelige tider</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- SERVICES -->
-<section id="services" class="section">
-  <div class="wrap">
-    <h2 class="reveal">Tjenester</h2>
-    <p class="lead reveal delay-1">Alt innen bilpleie og dekk — ryddig gruppert for enkel navigasjon.</p>
-
-    <style>
-      /* локальные стили этой секции */
-      .svc-group{margin-top:18px}
-      .svc-title{margin:0 0 8px; font-size:1.2rem; color:#e8f1ff}
-      .svc-sub{margin:0 0 14px; color:#a9bed8}
-      .svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-      .svc-card{
-        position:relative;
-        background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.04));
-        border:1px solid rgba(255,255,255,.10);
-        border-radius:16px; padding:16px; overflow:hidden;
-      }
-      .svc-card h3{margin:0 0 8px;font-size:1.05rem;color:#e8f1ff}
-      .svc-card ul{margin:0;padding-left:18px;color:#a9bed8;line-height:1.5}
-      @media (max-width:980px){.svc-grid{grid-template-columns:1fr 1fr}}
-      @media (max-width:520px){.svc-grid{grid-template-columns:1fr}}
-      /* опционально: фоновые изображения — см. подсказки ниже */
-      .svc-card.has-bg::before{
-        content:""; position:absolute; inset:0;
-        background-size:cover; background-position:center;
-        filter:brightness(.45); opacity:.35; /* делает текст читаемым */
-      }
-      .svc-card .content{position:relative}
-    </style>
-
-    <!-- 1) Bilpleie / Vask & Detailing -->
-    <div class="svc-group">
-      <h3 class="svc-title reveal">Bilpleie · Vask & Detailing</h3>
-      <p class="svc-sub reveal delay-1">Utvendig/innvendig vask, lakkrens, polering og rens.</p>
-
-      <div class="svc-grid">
-        <div class="svc-card reveal delay-1">
-          <div class="content">
-            <h3>UTVENDIG VASK</h3>
-            <ul>
-              <li>Avfetting</li><li>Asfaltfjerning</li><li>Håndvask</li><li>Felgvask</li><li>Tørking</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="svc-card reveal delay-2">
-          <div class="content">
-            <h3>INNVENDIG VASK</h3>
-            <ul>
-              <li>Støvsuging</li><li>Interiørvask</li><li>Vindusvask</li><li>Mattevask</li><li>Tørking</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="svc-card reveal delay-3">
-          <div class="content">
-            <h3>LAKKRENS</h3>
-            <ul>
-              <li>Avfetting</li><li>Asfaltfjerning</li><li>Håndvask</li><li>Felgvask</li>
-              <li>Tørking</li><li>Fjerning av lette striper</li><li>Polering</li><li>Lakkrens</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="svc-card reveal delay-1">
-          <div class="content">
-            <h3>POLERING</h3>
-            <ul>
-              <li>Avfetting</li><li>Asfaltfjerning</li><li>Håndvask</li><li>Felgvask</li>
-              <li>Tørking</li><li>Polering</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="svc-card reveal delay-2">
-          <div class="content">
-            <h3>INNVENDIG RENS</h3>
-            <ul>
-              <li>Støvsuging</li><li>Interiørvask</li><li>Vindusvask</li><li>Mattevask</li>
-              <li>Tørking</li><li>Rens av seter</li><li>Lukt sanering</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 2) Dekk & Felg (шиномонтаж) -->
-    <div class="svc-group">
-      <h3 class="svc-title reveal" style="color:#bfe6ff">Dekk & Felg</h3>
-      <p class="svc-sub reveal delay-1">Skift, hotell og salg av dekk og felg.</p>
-
-      <div class="svc-grid">
-        <div class="svc-card reveal delay-1">
-          <div class="content">
-            <h3>DEKKSKIFT</h3>
-            <ul><li>Av- og påmontering</li></ul>
-          </div>
-        </div>
-
-        <div class="svc-card reveal delay-2">
-          <div class="content">
-            <h3>DEKKHOTELL</h3>
-            <ul><li>Avmontering</li><li>Vask</li><li>Oppbevaring</li><li>Påmontering</li></ul>
-          </div>
-        </div>
-
-        <div class="svc-card reveal delay-3">
-          <div class="content">
-            <h3>SALG AV DEKK OG FELG</h3>
-            <ul>
-              <li>Nye dekk og felger</li>
-              <li>Bestilling etter mål og sesong</li>
-              <li>Montering og balansering</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="cta-row" style="margin-top:16px">
-      <a class="btn btn-primary btn-lg" href="#contact">Bestill time</a>
-    </div>
-  </div>
-</section>
-
-  <div class="wrap">
-    <h2 class="reveal">Tjenester</h2>
-
-    <style>
-      /* локальные стили для списков услуг */
-      .svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:12px}
-      .svc-card{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.10);border-radius:16px;padding:16px}
-      .svc-card h3{margin:0 0 8px;font-size:1.05rem;color:#e8f1ff}
-      .svc-card ul{margin:0;padding-left:18px;color:#a9bed8;line-height:1.5}
-      @media (max-width:980px){.svc-grid{grid-template-columns:1fr 1fr}}
-      @media (max-width:520px){.svc-grid{grid-template-columns:1fr}}
-    </style>
-
-    <div class="svc-grid">
-      <div class="svc-card reveal delay-1">
-        <h3>UTVENDIG VASK</h3>
-        <ul>
-          <li>Avfetting</li>
-          <li>Asfaltfjerning</li>
-          <li>Håndvask</li>
-          <li>Felgvask</li>
-          <li>Tørking</li>
-        </ul>
-      </div>
-
-      <div class="svc-card reveal delay-2">
-        <h3>INNVENDIG VASK</h3>
-        <ul>
-          <li>Støvsuging</li>
-          <li>Interiørvask</li>
-          <li>Vindusvask</li>
-          <li>Mattevask</li>
-          <li>Tørking</li>
-        </ul>
-      </div>
-
-      <div class="svc-card reveal delay-3">
-        <h3>LAKKRENS</h3>
-        <ul>
-          <li>Avfetting</li>
-          <li>Asfaltfjerning</li>
-          <li>Håndvask</li>
-          <li>Felgvask</li>
-          <li>Tørking</li>
-          <li>Fjerning av lette striper</li>
-          <li>Polering</li>
-          <li>Lakkrens</li>
-        </ul>
-      </div>
-
-      <div class="svc-card reveal delay-1">
-        <h3>DEKKSKIFT</h3>
-        <ul>
-          <li>Av- og påmontering</li>
-        </ul>
-      </div>
-
-      <div class="svc-card reveal delay-2">
-        <h3>DEKKHOTELL</h3>
-        <ul>
-          <li>Avmontering</li>
-          <li>Vask</li>
-          <li>Oppbevaring</li>
-          <li>Påmontering</li>
-        </ul>
-      </div>
-
-      <div class="svc-card reveal delay-3">
-        <h3>POLERING</h3>
-        <ul>
-          <li>Avfetting</li>
-          <li>Asfaltfjerning</li>
-          <li>Håndvask</li>
-          <li>Felgvask</li>
-          <li>Tørking</li>
-          <li>Polering</li>
-        </ul>
-      </div>
-
-      <div class="svc-card reveal delay-1">
-        <h3>INNVENDIG RENS</h3>
-        <ul>
-          <li>Støvsuging</li>
-          <li>Interiørvask</li>
-          <li>Vindusvask</li>
-          <li>Mattevask</li>
-          <li>Tørking</li>
-          <li>Rens av seter</li>
-          <li>Lukt sanering</li>
-        </ul>
-      </div>
-
-      <div class="svc-card reveal delay-2">
-        <h3>SALG AV DEKK OG FELG</h3>
-        <ul>
-          <li>Nye dekk og felger</li>
-          <li>Bestilling etter mål og sesong</li>
-          <li>Montering og balansering</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="cta-row" style="margin-top:16px">
-      <a class="btn btn-primary btn-lg" href="#contact">Bestill time</a>
-    </div>
-  </div>
-</section>
-
-
-<!-- PRICING -->
-<section id="pricing" class="section">
-  <div class="wrap">
-    <h2 class="reveal">Priser</h2>
-    <p class="lead reveal delay-1">Velg pakken — bestill på nett, enkelt og raskt.</p>
-    <div class="grid-3">
-      <div class="card reveal delay-1">
-        <h3>Rask utvendig vask</h3>
-        <p><b>199 NOK</b></p>
-        <p class="muted">Håndvask, felgrens og tørk</p>
-        <a class="btn btn-primary" href="#contact">Bestill</a>
-      </div>
-      <div class="card reveal delay-2" style="border:1px solid rgba(105,185,255,.35)">
-        <h3>Komplett vask</h3>
-        <p><b>399 NOK</b></p>
-        <p class="muted">Utvendig + enkel innvendig</p>
-        <a class="btn btn-primary" href="#contact">Bestill</a>
-      </div>
-      <div class="card reveal delay-3">
-        <h3>Premium detailing</h3>
-        <p><b>1490 NOK</b></p>
-        <p class="muted">Kjemi, beskyttelse og finish</p>
-        <a class="btn btn-primary" href="#contact">Bestill</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- GALLERY -->
-<section id="gallery" class="section">
-  <div class="wrap">
-    <h2>Galleri</h2>
-    <p class="lead">Eksempelbilder fra arbeidet vårt</p>
-
-    <div class="pcw-slider">
-      <div class="pcw-main">
-        <button class="pcw-prev" aria-label="Forrige">‹</button>
-        <img id="pcwMain" src="" alt="Galleri-bilde">
-        <button class="pcw-next" aria-label="Neste">›</button>
-      </div>
-      <div class="pcw-thumbs" id="pcwThumbs"></div>
-    </div>
-  </div>
-
-  <style>
-    .pcw-slider{display:flex;flex-direction:column;align-items:center;gap:10px}
-    .pcw-main{position:relative;width:100%;max-width:980px;min-height:200px;background:#0b1936;border-radius:12px;border:1px solid rgba(255,255,255,.1)}
-    .pcw-main img{
-      width:100%;
-      height:auto;
-      max-height:70vh;           /* не выше 70% экрана */
-      object-fit:contain;        /* показываем целиком, без обрезки */
-      display:block;
-      border-radius:12px;
-      background:#0b1936;        /* «рамка» вокруг разных пропорций */
-    }
-    .pcw-prev, .pcw-next{
-      position:absolute; top:50%; transform:translateY(-50%);
-      background:rgba(0,0,0,.45); color:#fff; border:0; border-radius:10px;
-      font-size:1.8rem; line-height:1; padding:8px 12px; cursor:pointer
-    }
-    .pcw-prev{left:10px} .pcw-next{right:10px}
-    .pcw-prev:hover, .pcw-next:hover{filter:brightness(1.1)}
-
-    /* миниатюры — без обрезки по высоте */
-    .pcw-thumbs{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:980px}
-    .pcw-thumbs img{
-      width:92px; height:auto;   /* авто-рост по высоте */
-      max-height:68px;           /* ограничиваем, но не обрезаем */
-      object-fit:contain;        /* показываем целиком */
-      background:#0b1936;
-      border-radius:8px; border:1px solid rgba(255,255,255,.15);
-      opacity:.75; cursor:pointer; transition:opacity .2s ease, transform .2s ease
-    }
-    .pcw-thumbs img:hover{opacity:.95; transform:translateY(-1px)}
-    .pcw-thumbs img.active{opacity:1; outline:2px solid #69b9ff}
-
-    @media (max-width:520px){
-      .pcw-prev, .pcw-next{font-size:1.6rem; padding:6px 10px}
-      .pcw-thumbs img{width:76px; max-height:56px}
-    }
-  </style>
-
-  <script>
-    let G = [];    // список картинок из JSON
-    let gi = 0;    // текущий индекс
-    const mainImg = document.getElementById('pcwMain');
-    const thumbs  = document.getElementById('pcwThumbs');
-
-    async function loadGallery(){
-      try{
-        const res = await fetch('assets/gallery.json', {cache:'no-store'});
-        G = await res.json();
-      }catch(e){ G = []; }
-      if(!Array.isArray(G) || G.length===0) return;
-      gi = 0;
-      render();
-      autoPlay();
-    }
-
-    function render(){
-      mainImg.src = G[gi];
-      thumbs.innerHTML = G.map((src,idx)=>`<img src="${src}" data-i="${idx}" class="${idx===gi?'active':''}" alt="mini">`).join('');
-    }
-
-    function show(i){
-      if(!G.length) return;
-      gi = (i + G.length) % G.length;
-      mainImg.src = G[gi];
-      // активная миниатюра
-      [...thumbs.querySelectorAll('img')].forEach((t,idx)=> t.classList.toggle('active', idx===gi));
-    }
-
-    document.querySelector('.pcw-prev').onclick = ()=> show(gi-1);
-    document.querySelector('.pcw-next').onclick = ()=> show(gi+1);
-    thumbs.addEventListener('click', e=>{
-      const t = e.target.closest('img[data-i]'); if(!t) return;
-      show(Number(t.dataset.i));
-    });
-
-    // авто-смена раз в 6 сек (останавливается при невидимости вкладки)
-    let timer;
-    function autoPlay(){
-      clearInterval(timer);
-      timer = setInterval(()=>{ if(document.visibilityState==='visible') show(gi+1); }, 6000);
-    }
-    document.addEventListener('visibilitychange', autoPlay);
-
-    loadGallery();
-  </script>
-</section>
-
-
-
-<!-- CONTACT -->
-<section id="contact" class="section">
-  <div class="wrap contact">
-    <div class="reveal">
-      <h2>Kontakt</h2>
-      <p><b>Adresse:</b> Sykehusgata 8, 1767 Halden, Norge</p>
-      <p>
-        <a class="btn btn-ghost" target="_blank" rel="noopener"
-           href="https://maps.apple.com/place?address=Sykehusgata%208,%201767%20Halden,%20Norway&coordinate=59.123026,11.394009&name=Pro%20Carwash%20Halden%20%7C%20Halden&place-id=IA625F661BBED5090&map=explore">
-           Åpne i Apple Maps
-        </a>
-      </p>
-      <h3>Åpningstider</h3>
-      <ul class="muted">
-        <li>Mandag: 08:30 – 16:30</li>
-        <li>Tirsdag: 08:30 – 16:30</li>
-        <li>Onsdag: 08:30 – 16:30</li>
-        <li>Torsdag: 08:30 – 16:30</li>
-        <li>Fredag: 08:30 – 16:30</li>
-        <li>Lørdag: 10:00 – 15:00</li>
-        <li>Søndag: Stengt</li>
-      </ul>
-      <p><b>Telefon:</b> <a href="tel:+4792132214" style="color:#d9ebff">+47 92 13 22 14</a></p>
-      <p><b>E-post:</b> <a href="mailto:post@procarwash.no" style="color:#d9ebff">post@procarwash.no</a></p>
-      <div class="cta-row" style="margin-top:10px">
-        <a class="btn btn-primary btn-lg" href="#contact">Bestill time</a>
-      </div>
-    </div>
-    <div class="map reveal delay-2">
-      <iframe title="Kart" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-        src="https://maps.google.com/maps?q=Sykehusgata%208,%201767%20Halden&t=&z=13&ie=UTF8&iwloc=&output=embed"></iframe>
-    </div>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer class="footer">
-  <div class="wrap">
-    <small>© <span id="year"></span> Pro Carwash Halden</small>
-    <a class="btn btn-ghost" href="#top">Til toppen ↑</a>
-  </div>
-</footer>
-
-<!-- Плавающая кнопка -->
-<a class="floating" href="#contact" aria-label="Bestill time">Bestill time</a>
-
-<script>
-  document.getElementById('year').textContent = new Date().getFullYear();
-
-  const header = document.querySelector('.header');
-
-  // Клик по логотипу — плавно в самый верх
-  document.getElementById('brandLink').addEventListener('click', (e)=>{
-    e.preventDefault();
-    window.scrollTo({top:0, behavior:'smooth'});
-  });
-
-  // Плавный скролл по якорям с учётом шапки
-  function smartScrollTo(hash){
-    const el = document.querySelector(hash);
-    if(!el) return;
-    const y = el.getBoundingClientRect().top + window.pageYOffset - (header.offsetHeight+8);
-    window.scrollTo({top:y, behavior:'smooth'});
-  }
-  document.querySelectorAll('a[href^="#"]').forEach(a=>{
-    a.addEventListener('click', e=>{
-      const hash=a.getAttribute('href');
-      if(hash.length>1 && a.id!=='brandLink'){ e.preventDefault(); smartScrollTo(hash); }
-    });
-  });
-
-  // Подсветка активного раздела (по наибольшей видимой части)
-  const navLinks=[...document.querySelectorAll('.nav a')];
-  const sections=navLinks.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
-  const io = new IntersectionObserver((entries)=>{
-    let best={id:null,ratio:0};
-    entries.forEach(en=>{ if(en.intersectionRatio>best.ratio) best={id:en.target.id,ratio:en.intersectionRatio}; });
-    if(best.id){ navLinks.forEach(a=>a.classList.toggle('active', a.getAttribute('href')==='#'+best.id)); }
-  },{
-    threshold:[0,.25,.5,.75,1],
-    rootMargin:`-${header.offsetHeight+6}px 0px -40% 0px`
-  });
-  sections.forEach(s=>io.observe(s));
-
-  // Анимация появления
-  const io2 = new IntersectionObserver((ents)=>{
-    ents.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io2.unobserve(e.target);} });
-  },{threshold:0.12});
-  document.querySelectorAll('.reveal').forEach(el=>io2.observe(el));
-</script>
-</body>
-</html>
