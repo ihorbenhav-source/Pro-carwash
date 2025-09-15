@@ -98,7 +98,7 @@
 </head>
 <body>
 
-<!-- HEADER (desktop остаётся как был) -->
+<!-- HEADER — desktop неизменен; мобильное меню поверх -->
 <header class="header" id="top">
   <div class="wrap bar">
     <a href="#top" class="brand" id="brandLink">
@@ -114,97 +114,102 @@
       <a href="#contact">Kontakt</a>
     </nav>
 
-    <!-- ДОБАВЛЕНО: бургер-кнопка, только для мобильного -->
-    <button id="burger"
-            class="burger-btn"
-            aria-label="Meny"
-            aria-controls="nav"
-            aria-expanded="false">☰</button>
+    <!-- бургер, виден только на мобиле -->
+    <button id="burger" class="burger-btn" aria-label="Meny" aria-controls="nav" aria-expanded="false">
+      <!-- простая иконка -->
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M3 6h18M3 12h18M3 18h18" stroke="#bfe6ff" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
   </div>
 </header>
 
-<!-- ДОБАВЛЕНО: только мобильные стили, desktop не трогаем -->
 <style>
-  /* по умолчанию на десктопе кнопку не показываем */
-  .burger-btn{display:none}
+  /* Кнопка бургера скрыта на десктопе */
+  .burger-btn{display:none;background:transparent;border:0;padding:6px;cursor:pointer}
 
-  @media (max-width: 520px){
-    /* показать бургер, расположить справа от меню/логотипа */
-    .burger-btn{
-      display:block; margin-left:12px;
-      font-size:1.8rem; line-height:1; background:transparent; border:0; color:#bfe6ff;
-      cursor:pointer; z-index:100;
-    }
+  /* Мобильное меню — только до 520px, внешний вид «аккуратная панель» */
+  @media (max-width:520px){
+    .burger-btn{display:block;margin-left:10px;z-index:110}
 
-    /* прячем стандартную навигацию и превращаем её в выезжающую панель */
     .header .nav{
-      display:none; /* по умолчанию скрыта */
-      position:fixed; inset:auto 0 0 auto; /* фикс справа */
-      top:0; right:0; bottom:0;
-      width:78vw; max-width:320px;
-      padding:calc(16px + env(safe-area-inset-top,0)) 18px 18px;
-      background:rgba(11,25,54,.96); backdrop-filter:blur(8px);
+      display:none;
+      position:fixed; top:0; right:0; bottom:0; width:78vw; max-width:320px;
+      padding: calc(16px + env(safe-area-inset-top,0)) 18px 18px;
+      background: linear-gradient(180deg, rgba(11,25,54,.96), rgba(11,25,54,.92));
+      backdrop-filter: blur(8px);
       border-left:1px solid rgba(255,255,255,.08);
-      flex-direction:column; gap:14px; z-index:99;
+      box-shadow:-12px 0 24px rgba(0,0,0,.35);
+      flex-direction:column; gap:12px; z-index:109;
+      transform: translateX(100%); transition: transform .25s ease;
     }
-    /* когда открыт бургер — показываем меню */
-    body.nav-open .header .nav{ display:flex }
+    body.nav-open .header .nav{ display:flex; transform: translateX(0); }
 
-    /* оверлей под меню (создаётся скриптом) */
-    .nav-overlay{ display:none }
+    /* фон под меню */
+    .nav-overlay{display:none}
     body.nav-open .nav-overlay{
-      display:block; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:98;
+      display:block; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:108;
+      animation: fadeIn .2s ease;
     }
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 
-    /* ссылки меню крупнее для тача */
+    /* Ссылки — крупные и кликабельные */
     .header .nav a{
-      font-size:20px; padding:10px 8px; border-radius:10px;
+      color:#bfe6ff; text-decoration:none; font-weight:800;
+      font-size:20px; padding:12px 10px; border-radius:10px;
     }
-    .header .nav a:hover{ background:rgba(255,255,255,.10) }
+    .header .nav a:hover{ background:rgba(255,255,255,.10); }
   }
 </style>
 
-<!-- ДОБАВЛЕНО: лёгкий JS — открытие/закрытие только на мобильном -->
 <script>
   (function(){
     const burger = document.getElementById('burger');
-    const header = document.querySelector('.header');
+    const nav = document.getElementById('nav');
 
-    // создаём полупрозрачный фон под мобильное меню
-    const overlay = document.createElement('div');
-    overlay.className = 'nav-overlay';
-    document.body.appendChild(overlay);
+    // фон под меню (для клика «закрыть»)
+    let overlay = document.querySelector('.nav-overlay');
+    if(!overlay){ overlay = document.createElement('div'); overlay.className='nav-overlay'; document.body.appendChild(overlay); }
 
     function setOpen(open){
       document.body.classList.toggle('nav-open', open);
       burger.setAttribute('aria-expanded', open);
     }
 
-    // клик по бургеру
+    // открыть/закрыть
     burger.addEventListener('click', ()=> setOpen(!document.body.classList.contains('nav-open')));
-    // клик по фону — закрыть
     overlay.addEventListener('click', ()=> setOpen(false));
-    // клик по пунктам меню — закрыть (на мобильном)
-    document.getElementById('nav').addEventListener('click', e=>{
-      if(e.target.matches('a')) setOpen(false);
-    });
-    // Esc — закрыть
-    document.addEventListener('keydown', e=>{
-      if(e.key === 'Escape') setOpen(false);
-    });
-    // при ресайзе на десктоп — убрать мобильное состояние
-    window.addEventListener('resize', ()=>{
-      if(window.innerWidth > 520) setOpen(false);
+    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') setOpen(false); });
+
+    // Умный скролл по якорям (учитываем высоту шапки)
+    function smartScrollTo(hash){
+      const header = document.querySelector('.header');
+      const el = document.querySelector(hash);
+      if(!el) return;
+      const y = el.getBoundingClientRect().top + window.pageYOffset - (header.offsetHeight + 8);
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+
+    // Рабочие ссылки в меню на мобиле
+    nav.addEventListener('click', (e)=>{
+      const a = e.target.closest('a[href^="#"]');
+      if(!a) return;
+      e.preventDefault();
+      setOpen(false);
+      smartScrollTo(a.getAttribute('href'));
     });
 
-    // вернуть «скролл к верху» по клику на логотип (как раньше)
+    // На десктопе — оставляем как было (если у вас уже есть подобная логика — она не ломается)
     const brand = document.getElementById('brandLink');
     if(brand){
       brand.addEventListener('click', (e)=>{
         e.preventDefault();
-        window.scrollTo({top:0, behavior:'smooth'});
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       });
     }
+
+    // если случайно оставили меню открытым и развернули экран — закрыть
+    window.addEventListener('resize', ()=>{ if(window.innerWidth>520) setOpen(false); });
   })();
 </script>
 
