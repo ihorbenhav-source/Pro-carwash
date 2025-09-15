@@ -98,7 +98,7 @@
 </head>
 <body>
 
-<!-- HEADER (desktop как был) -->
+<!-- HEADER (desktop как был; добавлен только мобильный бургер) -->
 <header class="header" id="top">
   <div class="wrap bar">
     <a href="#top" class="brand" id="brandLink">
@@ -106,7 +106,7 @@
       <span>Pro Carwash Halden</span>
     </a>
 
-    <nav class="nav" id="nav">
+    <nav class="nav" id="nav" role="navigation" aria-label="Hovedmeny">
       <a href="#about">Om oss</a>
       <a href="#services">Tjenester</a>
       <a href="#pricing">Priser</a>
@@ -114,40 +114,54 @@
       <a href="#contact">Kontakt</a>
     </nav>
 
-    <!-- бургер — только на мобилке -->
-    <button id="burger" class="burger-btn" aria-label="Meny" aria-controls="nav" aria-expanded="false">
-      <!-- иконка-гамбургер -->
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      </svg>
+    <!-- КНОПКА МЕНЮ — только на мобилке -->
+    <button id="burger" class="burger-btn" aria-label="Åpne meny"
+            aria-controls="nav" aria-expanded="false">
+      <span class="burger-ico">☰</span>
+      <span class="burger-text">Meny</span>
     </button>
   </div>
 </header>
 
-<!-- мобильные стили (десктоп не трогаем) -->
+<!-- Мобильные стили (desktop не затрагиваем) -->
 <style>
-  .burger-btn{display:none;color:#bfe6ff;background:transparent;border:0;cursor:pointer}
+  .burger-btn{display:none}
 
-  @media (max-width: 520px){
-    .burger-btn{display:block;margin-left:10px;z-index:110}
-
-    /* панель меню */
-    .header .nav{
-      display:none; position:fixed; top:0; right:0; bottom:0; width:82vw; max-width:360px;
-      padding:18px 18px 22px; background:rgba(11,25,54,.97); backdrop-filter:blur(10px);
-      border-left:1px solid rgba(255,255,255,.08); box-shadow:-8px 0 24px rgba(0,0,0,.35);
-      flex-direction:column; gap:10px; z-index:109; border-top-left-radius:16px; border-bottom-left-radius:16px;
-      transform:translateX(12px); transition:opacity .2s ease, transform .2s ease;
+  @media (max-width:520px){
+    .burger-btn{
+      display:flex; align-items:center; gap:8px;
+      padding:10px 14px; border:1.5px solid rgba(105,185,255,.6);
+      border-radius:999px; background:rgba(11,25,54,.85);
+      color:#cfe3fb; font-weight:800; cursor:pointer; z-index:110;
+      box-shadow:0 6px 18px rgba(0,0,0,.25);
     }
-    body.nav-open .header .nav{ display:flex; transform:none }
+    .burger-ico{font-size:1.2rem; line-height:1}
+    .burger-text{font-size:1rem; line-height:1}
 
+    /* Панель мобильного меню (выезжает справа) */
+    .header .nav{
+      display:none; position:fixed; top:0; right:0; bottom:0;
+      width:84vw; max-width:360px; padding:18px 18px 22px;
+      background:rgba(11,25,54,.97); backdrop-filter:blur(10px);
+      border-left:1px solid rgba(255,255,255,.08);
+      border-top-left-radius:16px; border-bottom-left-radius:16px;
+      box-shadow:-12px 0 28px rgba(0,0,0,.35);
+      flex-direction:column; gap:10px; z-index:109;
+      transform:translateX(12px); opacity:0;
+      transition:transform .2s ease, opacity .2s ease;
+    }
+    body.nav-open .header .nav{ display:flex; transform:none; opacity:1 }
+
+    /* Пункты — крупные, «кнопочками» */
     .header .nav a{
-      font-size:20px; font-weight:800; color:#cfe3fb; text-decoration:none; padding:12px 10px; border-radius:10px;
+      display:block; font-size:20px; font-weight:900;
+      color:#e8f1ff; text-decoration:none;
+      padding:12px 12px; border-radius:12px;
     }
     .header .nav a:hover{ background:rgba(255,255,255,.10) }
-    .header .nav a.active{ background:rgba(105,185,255,.15); color:#e8f1ff; outline:1px solid rgba(105,185,255,.35) }
+    .header .nav a.active{ background:rgba(105,185,255,.15); outline:1px solid rgba(105,185,255,.35) }
 
-    /* затемнение фона под меню */
+    /* Фон под меню */
     .nav-overlay{ display:none }
     body.nav-open .nav-overlay{
       display:block; position:fixed; inset:0; background:rgba(0,0,0,.48); z-index:108;
@@ -157,58 +171,55 @@
 
 <script>
   (function(){
-    const burger = document.getElementById('burger');
-    const nav = document.getElementById('nav');
     const header = document.querySelector('.header');
+    const nav = document.getElementById('nav');
+    const burger = document.getElementById('burger');
 
-    // фон под меню
-    const overlay = document.createElement('div');
-    overlay.className = 'nav-overlay';
-    document.body.appendChild(overlay);
+    // полупрозрачный фон
+    let overlay = document.querySelector('.nav-overlay');
+    if(!overlay){ overlay = document.createElement('div'); overlay.className='nav-overlay'; document.body.appendChild(overlay); }
 
-    function setOpen(open){
+    function openMenu(open){
       document.body.classList.toggle('nav-open', open);
       burger.setAttribute('aria-expanded', open);
     }
 
-    // бургер
-    burger.addEventListener('click', ()=> setOpen(!document.body.classList.contains('nav-open')));
-    overlay.addEventListener('click', ()=> setOpen(false));
+    // клик по бургеру / фону
+    burger.addEventListener('click', ()=> openMenu(!document.body.classList.contains('nav-open')));
+    overlay.addEventListener('click', ()=> openMenu(false));
 
-    // плавный скролл с учётом высоты шапки (работает и из моб.меню)
+    // ПЛАВНЫЙ СКРОЛЛ + РАБОТА С ЯКОРЯМИ НА МОБИЛКЕ
     function smartScrollTo(hash){
       const el = document.querySelector(hash);
       if(!el) return;
       const y = el.getBoundingClientRect().top + window.pageYOffset - (header.offsetHeight + 8);
-      window.scrollTo({top:y, behavior:'smooth'});
+      window.scrollTo({ top:y, behavior:'smooth' });
     }
 
-    // клики по пунктам меню
+    // Обрабатываем клики по пунктам, чтобы якоря работали стабильно
     nav.addEventListener('click', (e)=>{
-      const a = e.target.closest('a[href^="#"]');
-      if(!a) return;
+      const link = e.target.closest('a[href^="#"]');
+      if(!link) return;
       e.preventDefault();
-      const hash = a.getAttribute('href');
-      setOpen(false);
+      const hash = link.getAttribute('href');
+      openMenu(false);
       smartScrollTo(hash);
-      // активный пункт
-      [...nav.querySelectorAll('a')].forEach(x=>x.classList.toggle('active', x===a));
+      // подсветка активного пункта в панели
+      [...nav.querySelectorAll('a')].forEach(a=>a.classList.toggle('active', a===link));
     });
 
-    // логотип — наверх
+    // Логотип — к самому верху
     const brand = document.getElementById('brandLink');
     if(brand){
-      brand.addEventListener('click', (e)=>{
-        e.preventDefault();
-        setOpen(false);
-        window.scrollTo({top:0, behavior:'smooth'});
-      });
+      brand.addEventListener('click', (e)=>{ e.preventDefault(); openMenu(false); window.scrollTo({top:0, behavior:'smooth'}); });
     }
 
-    // если растянули экран — закрыть моб.меню
-    window.addEventListener('resize', ()=>{ if(window.innerWidth > 520) setOpen(false); });
+    // Esc закрывает меню; при переходе на десктоп — выключить мобильное состояние
+    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') openMenu(false); });
+    window.addEventListener('resize', ()=>{ if(window.innerWidth>520) openMenu(false); });
   })();
 </script>
+
 
 
 <!-- HERO -->
