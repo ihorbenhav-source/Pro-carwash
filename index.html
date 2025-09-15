@@ -98,7 +98,7 @@
 </head>
 <body>
 
-<!-- HEADER (desktop как было, мобильное меню добавлено) -->
+<!-- ===== HEADER (Desktop как было; мобильное меню добавлено) ===== -->
 <header class="header" id="top">
   <div class="wrap bar">
     <a href="#top" class="brand" id="brandLink">
@@ -123,11 +123,12 @@
   </div>
 </header>
 
-<!-- Только мобильные стили (десктоп не затрагивают) -->
+<!-- ===== ТОЛЬКО МОБИЛЬНЫЕ СТИЛИ (ПК не трогаем) ===== -->
 <style>
   .burger-btn{display:none}
 
-  @media (max-width:520px){
+  /* Порог мобильной версии — можно поменять на 768/992 при желании */
+  @media (max-width: 840px){
     .burger-btn{
       display:flex; align-items:center; gap:8px;
       padding:10px 14px; border:1.5px solid rgba(105,185,255,.6);
@@ -138,7 +139,7 @@
     .burger-ico{font-size:1.2rem}
     .burger-text{font-size:1rem}
 
-    /* Мобильная панель меню (по умолчанию скрыта) */
+    /* Панель мобильного меню (скрыта по умолчанию) */
     .header .nav{
       display:none; position:fixed; top:0; right:0; bottom:0;
       width:84vw; max-width:360px; padding:18px 18px 22px;
@@ -168,64 +169,76 @@
   }
 </style>
 
+<!-- ===== ЛОГИКА МЕНЮ (плавный скролл и работа якорей) ===== -->
 <script>
 (function(){
-  const header = document.querySelector('.header');
-  const nav    = document.getElementById('nav');
-  const burger = document.getElementById('burger');
+  var header = document.querySelector('.header');
+  var nav    = document.getElementById('nav');
+  var burger = document.getElementById('burger');
 
-  // полупрозрачный фон для мобильного меню
-  let overlay = document.querySelector('.nav-overlay');
+  if(!header || !nav) return;
+
+  // фон под мобильным меню
+  var overlay = document.querySelector('.nav-overlay');
   if(!overlay){
     overlay = document.createElement('div');
     overlay.className = 'nav-overlay';
     document.body.appendChild(overlay);
   }
 
-  function openMenu(open){
-    document.body.classList.toggle('nav-open', open);
-    if(burger) burger.setAttribute('aria-expanded', open);
+  function setOpen(open){
+    document.body.classList.toggle('nav-open', !!open);
+    if(burger) burger.setAttribute('aria-expanded', !!open);
   }
 
   // показать/скрыть меню
   if(burger){
-    burger.addEventListener('click', ()=> openMenu(!document.body.classList.contains('nav-open')));
-  }
-  overlay.addEventListener('click', ()=> openMenu(false));
-
-  // плавный скролл к секциям с учётом фикс-шапки
-  function smartScrollTo(hash){
-    const el = document.querySelector(hash);
-    if(!el) return;
-    const y = el.getBoundingClientRect().top + window.pageYOffset - (header.offsetHeight + 8);
-    window.scrollTo({ top:y, behavior:'smooth' });
-  }
-
-  // обработка кликов по пунктам меню (чтобы реально переходило)
-  nav.addEventListener('click', (e)=>{
-    const link = e.target.closest('a[href^="#"]');
-    if(!link) return;
-    e.preventDefault();
-    const hash = link.getAttribute('href');
-    openMenu(false);
-    smartScrollTo(hash);
-    // подсветка активного пункта
-    [...nav.querySelectorAll('a')].forEach(a=>a.classList.toggle('active', a===link));
-  });
-
-  // логотип — скролл к верху
-  const brand = document.getElementById('brandLink');
-  if(brand){
-    brand.addEventListener('click', (e)=>{
-      e.preventDefault();
-      openMenu(false);
-      window.scrollTo({ top:0, behavior:'smooth' });
+    burger.addEventListener('click', function(){
+      setOpen(!document.body.classList.contains('nav-open'));
     });
   }
+  overlay.addEventListener('click', function(){ setOpen(false); });
 
-  // Esc закрывает меню; при расширении экрана — сбрасываем мобильное состояние
-  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') openMenu(false); });
-  window.addEventListener('resize', ()=>{ if(window.innerWidth > 520) openMenu(false); });
+  // плавный скролл к секции (учитываем фикс-шапку)
+  function smartScrollTo(hash){
+    if(!hash) return;
+    var id = hash.charAt(0)==='#' ? hash.slice(1) : hash;
+    var el = document.getElementById(id) || document.querySelector('#'+CSS.escape(id));
+    if(el){
+      var y = el.getBoundingClientRect().top + window.pageYOffset - (header.offsetHeight + 8);
+      window.scrollTo({ top:y, behavior:'smooth' });
+    }else{
+      location.hash = '#'+id;
+    }
+  }
+
+  // клики по пунктам меню — ЗАКРЫТЬ и ПРОСКРОЛЛИТЬ (в capture, чтобы обойти чужие хендлеры)
+  nav.addEventListener('click', function(e){
+    var link = e.target.closest && e.target.closest('a[href^="#"]');
+    if(!link) return;
+    e.preventDefault();
+    var hash = link.getAttribute('href');
+    setOpen(false);
+    setTimeout(function(){ smartScrollTo(hash); }, 30);
+    // подсветка активного пункта в панели
+    [].forEach.call(nav.querySelectorAll('a'), function(a){
+      a.classList.toggle('active', a === link);
+    });
+  }, true);
+
+  // Логотип — к самому верху
+  var brand = document.getElementById('brandLink');
+  if(brand){
+    brand.addEventListener('click', function(e){
+      e.preventDefault();
+      setOpen(false);
+      window.scrollTo({ top:0, behavior:'smooth' });
+    }, true);
+  }
+
+  // Esc закрывает; при переходе на десктоп — сбрасываем мобильное состояние
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') setOpen(false); });
+  window.addEventListener('resize', function(){ if(window.innerWidth > 840) setOpen(false); });
 })();
 </script>
 
