@@ -641,7 +641,7 @@
     let timer;
     function autoPlay(){
       clearInterval(timer);
-      timer = setInterval(()=>{ if(document.visibilityState==='visible') show(gi+1); }, 6000);
+      timer = setInterval(()=>{ if(document.visibilityState==='visible') show(gi+1); }, 5000);
     }
     document.addEventListener('visibilitychange', autoPlay);
 
