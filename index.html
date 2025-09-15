@@ -573,7 +573,7 @@
     const BTN_NEXT = document.querySelector('.pcw-next');
     const BTN_CLOSE = document.querySelector('.pcw-close');
 
-    const AUTOPLAY_MS = 4000; // ~6 секунд — динамично, но успеваешь разглядеть
+    const AUTOPLAY_MS = 6000; // ~6 секунд — динамично, но успеваешь разглядеть
 
     async function loadGallery(){
       try{
@@ -628,7 +628,9 @@
     // кнопки
     BTN_PREV.onclick = ()=>{ stopAutoplay(); show(gi-1); startAutoplay(); };
     BTN_NEXT.onclick = ()=>{ stopAutoplay(); show(gi+1); startAutoplay(); };
-    
+    BTN_CLOSE.onclick = ()=>{ /* просто плавно проскроллим к началу галереи */
+      const y = document.getElementById('gallery').getBoundingClientRect().top + window.pageYOffset - (document.querySelector('.header').offsetHeight+8);
+      window.scrollTo({top:y, behavior:'smooth'});
     };
 
     // клики по миниатюрам
@@ -667,6 +669,7 @@
     loadGallery();
   </script>
 </section>
+
 
 
 
