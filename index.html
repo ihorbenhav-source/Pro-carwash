@@ -96,125 +96,75 @@
   }
 </style>
 </head>
-<body>
-
-<!-- ===== HEADER (ПК — без изменений; моб. меню добавлено) ===== -->
-<header class="header" id="top">
-  <div class="wrap bar">
-    <a href="#top" class="brand" id="brandLink">
-      <img src="assets/logo.png" alt="Pro Carwash Halden">
-      <span>Pro Carwash Halden</span>
-    </a>
-
-    <nav class="nav" id="nav" role="navigation" aria-label="Hovedmeny">
-      <a href="#about">Om oss</a>
-      <a href="#services">Tjenester</a>
-      <a href="#pricing">Priser</a>
-      <a href="#gallery">Galleri</a>
-      <a href="#contact">Kontakt</a>
-    </nav>
-
-    <!-- Кнопка меню — только на мобиле -->
-    <button id="burger" class="burger-btn" aria-label="Åpne meny"
-            aria-controls="nav" aria-expanded="false">
-      <span class="burger-ico">☰</span>
-      <span class="burger-text">Meny</span>
-    </button>
-  </div>
-</header>
-
-<!-- ===== ТОЛЬКО ДЛЯ МОБИЛЫ: стили и «жёсткий» оверрайд ===== -->
+<!-- === MOBILE NAV: без бургера, 2–3 столбца, рабочие якоря === -->
 <style>
-  /* Порог мобилы: 768px. Десктопный вид не меняем. */
-  .burger-btn{display:none}
+  /* Скрываем бургер/оверлей на всякий случай */
+  .burger-btn{display:none !important}
+  .nav-overlay{display:none !important}
 
-  @media (max-width:768px){
-    .burger-btn{
-      display:block; margin-left:12px;
-      font-size:1.8rem; line-height:1; background:transparent; border:0; color:#bfe6ff;
-      cursor:pointer; z-index:110;
-    }
-    /* превращаем .nav в выезжающее меню справа */
+  /* Мобильная раскладка меню: сетка из столбцов */
+  @media (max-width: 840px){
     .header .nav{
-      display:none; position:fixed; top:0; right:0; bottom:0; width:82vw; max-width:360px;
-      padding:18px 18px 22px; background:rgba(11,25,54,.97); backdrop-filter:blur(10px);
-      border-left:1px solid rgba(255,255,255,.08); box-shadow:-8px 0 24px rgba(0,0,0,.35);
-      flex-direction:column; gap:10px; z-index:109; border-top-left-radius:16px; border-bottom-left-radius:16px;
-      transform:translateX(12px); transition:opacity .2s ease, transform .2s ease;
+      /* перекрываем любые старые правила */
+      display:grid !important;
+      position:static !important;
+      grid-template-columns: repeat(3, auto);
+      justify-content:end;      /* прижать к правому краю */
+      align-items:center;
+      gap:8px 10px;
+      padding:8px 0 0;
+      background:transparent !important;
+      border:none !important;
+      box-shadow:none !important;
     }
-    body.nav-open .header .nav{ display:flex; transform:none }
+    /* на очень узких — 2 столбца */
+    @media (max-width: 480px){
+      .header .nav{ grid-template-columns: repeat(2, auto); justify-content:space-between; }
+    }
     .header .nav a{
-      font-size:20px; font-weight:800; color:#cfe3fb; text-decoration:none; padding:12px 10px; border-radius:10px;
+      display:inline-block;
+      padding:8px 12px;
+      font-size:16px;
+      font-weight:800;
+      color:#cfe3fb;
+      text-decoration:none;
+      border-radius:10px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.10);
     }
-    .header .nav a:hover{ background:rgba(255,255,255,.10) }
-    .header .nav a.active{ background:rgba(105,185,255,.15); color:#e8f1ff; outline:1px solid rgba(105,185,255,.35) }
-
-    /* затемнение фона */
-    .nav-overlay{ display:none }
-    body.nav-open .nav-overlay{
-      display:block; position:fixed; inset:0; background:rgba(0,0,0,.48); z-index:108;
-    }
+    .header .nav a:hover{ background:rgba(255,255,255,.12) }
+    .header .nav a.active{ background:rgba(105,185,255,.15); outline:1px solid rgba(105,185,255,.35) }
   }
 </style>
 
 <script>
-  (function(){
-    // добавляем кнопку, если её ещё нет
-    if(!document.getElementById('burger')){
-      const btn = document.createElement('button');
-      btn.id='burger'; btn.className='burger-btn'; btn.setAttribute('aria-label','Meny');
-      btn.setAttribute('aria-controls','nav'); btn.setAttribute('aria-expanded','false');
-      btn.innerHTML='☰';
-      document.querySelector('.wrap.bar').appendChild(btn);
-    }
-    const burger = document.getElementById('burger');
-    const nav = document.getElementById('nav');
-    const header = document.querySelector('.header');
+(function(){
+  const header = document.querySelector('.header');
+  const nav = document.getElementById('nav');
 
-    const overlay = document.createElement('div');
-    overlay.className='nav-overlay';
-    document.body.appendChild(overlay);
+  // убрать остатки старого меню, если были
+  const overlay = document.querySelector('.nav-overlay'); if(overlay) overlay.remove();
+  const burger  = document.getElementById('burger');     if(burger)  burger.remove();
 
-    function setOpen(open){
-      document.body.classList.toggle('nav-open', open);
-      burger && burger.setAttribute('aria-expanded', open);
-    }
+  // плавный скролл с учётом высоты шапки
+  function smartScrollTo(hash){
+    if(!hash) return;
+    const el = document.querySelector(hash);
+    if(!el) return;
+    const y = el.getBoundingClientRect().top + window.pageYOffset - (header.offsetHeight + 8);
+    window.scrollTo({ top: y, behavior: 'smooth' });
+  }
 
-    burger && burger.addEventListener('click', ()=> setOpen(!document.body.classList.contains('nav-open')));
-    overlay.addEventListener('click', ()=> setOpen(false));
-
-    // плавный скролл с учётом высоты шапки
-    function smartScrollTo(hash){
-      const el = document.querySelector(hash);
-      if(!el) return;
-      const y = el.getBoundingClientRect().top + window.pageYOffset - (header.offsetHeight + 8);
-      window.scrollTo({top:y, behavior:'smooth'});
-    }
-
-    // клики по пунктам меню (и на мобиле, и на десктопе)
-    nav.addEventListener('click', (e)=>{
-      const a = e.target.closest('a[href^="#"]');
-      if(!a) return;
+  // клики по пунктам меню (и только по ним)
+  nav.querySelectorAll('a[href^="#"]').forEach(a=>{
+    a.addEventListener('click', e=>{
       e.preventDefault();
-      const hash = a.getAttribute('href');
-      setOpen(false);
-      smartScrollTo(hash);
-      [...nav.querySelectorAll('a')].forEach(x=>x.classList.toggle('active', x===a));
+      smartScrollTo(a.getAttribute('href'));
+      // подсветка активного пункта
+      nav.querySelectorAll('a').forEach(x=>x.classList.toggle('active', x===a));
     });
-
-    // логотип — наверх
-    const brand = document.getElementById('brandLink');
-    if(brand){
-      brand.addEventListener('click', (e)=>{
-        e.preventDefault();
-        setOpen(false);
-        window.scrollTo({top:0, behavior:'smooth'});
-      });
-    }
-
-    // если растянули экран — закрыть моб.меню
-    window.addEventListener('resize', ()=>{ if(window.innerWidth > 768) setOpen(false); });
-  })();
+  });
+})();
 </script>
 
 
