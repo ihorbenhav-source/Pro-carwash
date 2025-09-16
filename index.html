@@ -385,29 +385,57 @@
   </div>
 
   <style>
-  .pcw-slider{display:flex;flex-direction:column;align-items:center;gap:10px}
-  .pcw-main{position:relative;width:100%;max-width:980px;min-height:220px;background:#0b1936;border-radius:12px;border:1px solid rgba(255,255,255,.1)}
+  .pcw-slider{
+    display:flex;flex-direction:column;align-items:center;gap:10px;
+    max-width:100%; overflow-x:hidden; /* не распираем страницу */
+  }
+  .pcw-main{
+    position:relative;width:100%;max-width:980px;min-height:220px;
+    background:#0b1936;border-radius:12px;border:1px solid rgba(255,255,255,.1);
+    overflow:hidden; /* защита от вываливания содержимого */
+  }
   .pcw-main img{
     width:100%; height:auto; max-height:70vh; object-fit:contain; display:block; border-radius:12px; background:#0b1936;
     filter:blur(8px); opacity:.6; transition:filter .35s ease, opacity .35s ease; /* blur-up */
+    touch-action:pan-y; /* свайп по X, прокрутка по Y */
   }
   .pcw-main img.loaded{filter:none; opacity:1}
 
+  /* БОЛЬШИЕ стрелки + прозрачность + большой хитбокс */
   .pcw-prev, .pcw-next{
-    position:absolute; top:50%; transform:translateY(-50%);
-    background:rgba(0,0,0,.45); color:#fff; border:0; border-radius:10px;
-    font-size:1.8rem; line-height:1; padding:8px 12px; cursor:pointer
+    position:absolute; top:0; bottom:0; width:20%;
+    background:linear-gradient(to right, rgba(0,0,0,.0), rgba(0,0,0,.18));
+    color:rgba(255,255,255,.85); border:0; cursor:pointer;
+    display:flex; align-items:center; justify-content:flex-start;
+    font-size:0; /* спрячем текст, рисуем через ::after */
+    transition:background .2s ease, color .2s ease; outline:none;
   }
-  .pcw-prev{left:10px} .pcw-next{right:10px}
-  .pcw-prev:hover, .pcw-next:hover{filter:brightness(1.1)}
+  .pcw-prev{ left:0; justify-content:flex-start; }
+  .pcw-next{
+    right:0; justify-content:flex-end;
+    background:linear-gradient(to left, rgba(0,0,0,.0), rgba(0,0,0,.18));
+  }
+  .pcw-prev::after, .pcw-next::after{
+    content:""; width:48px; height:48px; border-radius:999px;
+    border:2px solid rgba(255,255,255,.55);
+    display:inline-block;
+    mask-size:60% 60%; mask-position:center; mask-repeat:no-repeat;
+    background:rgba(255,255,255,.65);
+  }
+  .pcw-prev::after{ mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23fff" d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>'); margin-left:8px; }
+  .pcw-next::after{ mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23fff" d="M8.59 16.59 13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>'); margin-right:8px; }
+  .pcw-prev:hover, .pcw-next:hover{
+    background:rgba(0,0,0,.22);
+  }
 
+  /* миниатюры: горизонтальная лента без влияния на ширину страницы */
   .pcw-thumbs{
     display:flex; gap:8px; flex-wrap:nowrap; justify-content:flex-start;
-    max-width:980px; overflow:auto; padding-bottom:2px
+    width:100%; max-width:980px; overflow:auto; padding-bottom:2px;
+    -webkit-overflow-scrolling:touch; scrollbar-width:thin;
   }
   .pcw-thumbs::-webkit-scrollbar{height:8px}
   .pcw-thumbs::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:6px}
-
   .pcw-thumbs img{
     flex:0 0 auto; width:auto; height:64px; object-fit:contain; background:#0b1936;
     border-radius:8px; border:1px solid rgba(255,255,255,.15);
@@ -417,20 +445,20 @@
   .pcw-thumbs img.active{opacity:1; outline:2px solid #69b9ff}
 
   @media (max-width:520px){
-    .pcw-prev, .pcw-next{font-size:1.6rem; padding:6px 10px}
     .pcw-thumbs img{height:56px}
+    .pcw-prev::after, .pcw-next::after{ width:40px; height:40px; }
+    .pcw-prev, .pcw-next{ width:22%; }
   }
 </style>
 
-
-  <script>
+<script>
   let G = []; let gi = 0; let timer = null;
   const mainImg = document.getElementById('pcwMain');
   const thumbs  = document.getElementById('pcwThumbs');
   const BTN_PREV = document.querySelector('.pcw-prev');
   const BTN_NEXT = document.querySelector('.pcw-next');
 
-  const AUTOPLAY_MS = 4000; // динамично, но есть время рассмотреть
+  const AUTOPLAY_MS = 5000; // динамично, но комфортно
 
   async function loadGallery(){
     try{
@@ -454,10 +482,9 @@
     if(!G.length) return;
     gi = (i + G.length) % G.length;
 
-    // blur-up: сбрасываем класс, и ставим его после onload
+    // blur-up
     mainImg.classList.remove('loaded');
     const nextSrc = G[gi];
-
     if(immediate){
       mainImg.src = nextSrc;
     }else{
@@ -486,17 +513,17 @@
     stopAutoplay(); show(Number(t.dataset.i)); startAutoplay();
   });
 
-  // прокрутка миниатюр колёсиком — горизонтально
+  // прокрутка миниатюр колёсиком — горизонтально, не толкаем страницу
   thumbs.addEventListener('wheel', (e)=>{
     if(Math.abs(e.deltaY) > Math.abs(e.deltaX)){
       thumbs.scrollLeft += e.deltaY; e.preventDefault();
     }
   }, {passive:false});
 
-  // свайп по большому фото
+  // свайпы по большому фото (тач)
   let sx=0, dx=0;
-  mainImg.addEventListener('touchstart', e=>{ sx = e.touches[0].clientX; });
-  mainImg.addEventListener('touchmove',  e=>{ dx = e.touches[0].clientX - sx; });
+  mainImg.addEventListener('touchstart', e=>{ sx = e.touches[0].clientX; }, {passive:true});
+  mainImg.addEventListener('touchmove',  e=>{ dx = e.touches[0].clientX - sx; }, {passive:true});
   mainImg.addEventListener('touchend',   ()=>{
     if(Math.abs(dx)>40){ stopAutoplay(); dx<0 ? show(gi+1) : show(gi-1); startAutoplay(); }
     dx=0;
@@ -508,7 +535,6 @@
     const rect = g.getBoundingClientRect();
     const inView = rect.top < window.innerHeight && rect.bottom > 0;
     if(!inView) return;
-
     if(e.key==='ArrowLeft'){ stopAutoplay(); show(gi-1); startAutoplay(); }
     if(e.key==='ArrowRight'){ stopAutoplay(); show(gi+1); startAutoplay(); }
   });
