@@ -98,20 +98,37 @@
 </head
 <body>
   
+<!-- ===== HEADER ===== -->
+<header class="header" id="top">
+  <div class="wrap bar">
+    <a href="#top" class="brand" id="brandLink">
+      <img src="assets/logo.png" alt="Pro Carwash Halden">
+      <span>Pro Carwash Halden</span>
+    </a>
+
+    <nav class="nav" id="nav" role="navigation" aria-label="Hovedmeny">
+      <a href="#about">Om oss</a>
+      <a href="#services">Tjenester</a>
+      <a href="#pricing">Priser</a>
+      <a href="#gallery">Galleri</a>
+      <a href="#contact">Kontakt</a>
+    </nav>
+  </div>
+</header>
+
 <!-- === MOBILE NAV: без бургера, 2–3 столбца, рабочие якоря === -->
 <style>
-  /* Скрываем бургер/оверлей на всякий случай */
+  /* Убираем бургер и оверлей, если где-то остались */
   .burger-btn{display:none !important}
   .nav-overlay{display:none !important}
 
-  /* Мобильная раскладка меню: сетка из столбцов */
+  /* Мобильная сетка меню */
   @media (max-width: 840px){
     .header .nav{
-      /* перекрываем любые старые правила */
       display:grid !important;
       position:static !important;
       grid-template-columns: repeat(3, auto);
-      justify-content:end;      /* прижать к правому краю */
+      justify-content:end;
       align-items:center;
       gap:8px 10px;
       padding:8px 0 0;
@@ -119,9 +136,12 @@
       border:none !important;
       box-shadow:none !important;
     }
-    /* на очень узких — 2 столбца */
+    /* На очень узких экранах — 2 столбца */
     @media (max-width: 480px){
-      .header .nav{ grid-template-columns: repeat(2, auto); justify-content:space-between; }
+      .header .nav{
+        grid-template-columns: repeat(2, auto);
+        justify-content:space-between;
+      }
     }
     .header .nav a{
       display:inline-block;
@@ -134,8 +154,13 @@
       background:rgba(255,255,255,.08);
       border:1px solid rgba(255,255,255,.10);
     }
-    .header .nav a:hover{ background:rgba(255,255,255,.12) }
-    .header .nav a.active{ background:rgba(105,185,255,.15); outline:1px solid rgba(105,185,255,.35) }
+    .header .nav a:hover{
+      background:rgba(255,255,255,.12)
+    }
+    .header .nav a.active{
+      background:rgba(105,185,255,.15);
+      outline:1px solid rgba(105,185,255,.35)
+    }
   }
 </style>
 
@@ -144,11 +169,7 @@
   const header = document.querySelector('.header');
   const nav = document.getElementById('nav');
 
-  // убрать остатки старого меню, если были
-  const overlay = document.querySelector('.nav-overlay'); if(overlay) overlay.remove();
-  const burger  = document.getElementById('burger');     if(burger)  burger.remove();
-
-  // плавный скролл с учётом высоты шапки
+  // плавный скролл с учётом фиксированной шапки
   function smartScrollTo(hash){
     if(!hash) return;
     const el = document.querySelector(hash);
@@ -157,7 +178,7 @@
     window.scrollTo({ top: y, behavior: 'smooth' });
   }
 
-  // клики по пунктам меню (и только по ним)
+  // клики по пунктам меню
   nav.querySelectorAll('a[href^="#"]').forEach(a=>{
     a.addEventListener('click', e=>{
       e.preventDefault();
@@ -166,8 +187,18 @@
       nav.querySelectorAll('a').forEach(x=>x.classList.toggle('active', x===a));
     });
   });
+
+  // логотип — к самому верху
+  const brand = document.getElementById('brandLink');
+  if(brand){
+    brand.addEventListener('click', e=>{
+      e.preventDefault();
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+  }
 })();
 </script>
+
 
 
 
