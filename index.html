@@ -215,127 +215,191 @@
 <section id="services" class="section">
   <div class="wrap">
     <h2 class="reveal">Tjenester</h2>
-    <p class="lead reveal delay-1">Alt innen bilpleie og dekk — ryddig gruppert for enkel navigasjon.</p>
+    <p class="lead reveal delay-1">
+      Alt innen bilpleie og dekk – fra rask vask til keramisk lakkbeskyttelse og dekkhotell.
+    </p>
 
     <style>
-      /* локальные стили этой секции */
-      .svc-group{margin-top:18px}
-      .svc-title{margin:0 0 8px; font-size:1.2rem; color:#e8f1ff}
-      .svc-sub{margin:0 0 14px; color:#a9bed8}
+      /* lokalt for denne seksjonen */
+      .svc-group{margin-top:22px}
+      .svc-title{margin:0 0 8px;font-size:1.2rem;color:#e8f1ff}
+      .svc-sub{margin:0 0 14px;color:#a9bed8}
       .svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
       .svc-card{
         position:relative;
         background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.04));
         border:1px solid rgba(255,255,255,.10);
-        border-radius:16px; padding:16px; overflow:hidden;
+        border-radius:16px;
+        padding:16px;
+        overflow:hidden;
       }
       .svc-card h3{margin:0 0 8px;font-size:1.05rem;color:#e8f1ff}
       .svc-card ul{margin:0;padding-left:18px;color:#a9bed8;line-height:1.5}
       @media (max-width:980px){.svc-grid{grid-template-columns:1fr 1fr}}
       @media (max-width:520px){.svc-grid{grid-template-columns:1fr}}
-      /* опционально: фоновые изображения — см. подсказки ниже */
-      .svc-card.has-bg::before{
-        content:""; position:absolute; inset:0;
-        background-size:cover; background-position:center;
-        filter:brightness(.45); opacity:.35; /* делает текст читаемым */
-      }
-      .svc-card .content{position:relative}
     </style>
 
-    <!-- 1) Bilpleie / Vask & Detailing -->
+    <!-- 1) BILPLEIE · VASK & DETAILING -->
     <div class="svc-group">
-      <h3 class="svc-title reveal">Bilpleie · Vask & Detailing</h3>
-      <p class="svc-sub reveal delay-1">Utvendig/innvendig vask, lakkrens, polering og rens.</p>
+      <h3 class="svc-title reveal">Bilpleie · Vask &amp; Detailing</h3>
+      <p class="svc-sub reveal delay-1">
+        Vi tar hånd om bilen din ute og inne – fra enkel vask til full rens, polering og keramisk lakkbeskyttelse.
+      </p>
 
       <div class="svc-grid">
+        <!-- UTVENDIG VASK -->
         <div class="svc-card reveal delay-1">
           <div class="content">
             <h3>UTVENDIG VASK</h3>
             <ul>
-              <li>Avfetting</li><li>Asfaltfjerning</li><li>Håndvask</li><li>Felgvask</li><li>Tørking</li>
+              <li>Avfetting</li>
+              <li>Asfaltfjerning</li>
+              <li>Håndvask</li>
+              <li>Felgvask</li>
+              <li>Tørking</li>
             </ul>
           </div>
         </div>
 
+        <!-- INNVENDIG VASK -->
         <div class="svc-card reveal delay-2">
           <div class="content">
             <h3>INNVENDIG VASK</h3>
             <ul>
-              <li>Støvsuging</li><li>Interiørvask</li><li>Vindusvask</li><li>Mattevask</li><li>Tørking</li>
+              <li>Støvsuging av kupé og bagasjerom</li>
+              <li>Vask av matter</li>
+              <li>Rengjøring av interiørflater</li>
+              <li>Vindusvask innvendig</li>
             </ul>
           </div>
         </div>
 
+        <!-- KOMPLETT VASK -->
         <div class="svc-card reveal delay-3">
+          <div class="content">
+            <h3>KOMPLETT VASK (INNVENDIG + UTVENDIG)</h3>
+            <ul>
+              <li>Avfetting og asfaltfjerning</li>
+              <li>Håndvask av karosseri</li>
+              <li>Felgvask og tørking</li>
+              <li>Støvsuging av kupé og bagasjerom</li>
+              <li>Vask av matter</li>
+              <li>Rengjøring av interiørflater</li>
+              <li>Vindusvask inne og ute</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- LAKKRENS -->
+        <div class="svc-card reveal delay-1">
           <div class="content">
             <h3>LAKKRENS</h3>
             <ul>
-              <li>Avfetting</li><li>Asfaltfjerning</li><li>Håndvask</li><li>Felgvask</li>
-              <li>Tørking</li><li>Fjerning av lette striper</li><li>Polering</li><li>Lakkrens</li>
+              <li>Grundig vask og avfetting</li>
+              <li>Fjerning av flyverust og asfalt</li>
+              <li>Lakkrens og lett korrigering</li>
+              <li>Forbereder lakken for polering/coating</li>
             </ul>
           </div>
         </div>
 
-        <div class="svc-card reveal delay-1">
+        <!-- POLERING -->
+        <div class="svc-card reveal delay-2">
           <div class="content">
             <h3>POLERING</h3>
             <ul>
-              <li>Avfetting</li><li>Asfaltfjerning</li><li>Håndvask</li><li>Felgvask</li>
-              <li>Tørking</li><li>Polering</li>
+              <li>Maskinpolering</li>
+              <li>Reduksjon av lette riper og vaskeswirls</li>
+              <li>Dyp glans og bedre fargedybde</li>
+              <li>Avsluttes med beskyttende lag</li>
             </ul>
           </div>
         </div>
 
-        <div class="svc-card reveal delay-2">
+        <!-- INNVENDIG RENS -->
+        <div class="svc-card reveal delay-3">
           <div class="content">
             <h3>INNVENDIG RENS</h3>
             <ul>
-              <li>Støvsuging</li><li>Interiørvask</li><li>Vindusvask</li><li>Mattevask</li>
-              <li>Tørking</li><li>Rens av seter</li><li>Lukt sanering</li>
+              <li>Dyprens av seter og tekstiler</li>
+              <li>Støvsuging og interiørvask</li>
+              <li>Fjerning av flekker og lukt</li>
+              <li>Perfekt ved salg eller grundig oppfriskning</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- KERAMISK LAKKBESKYTTELSE -->
+        <div class="svc-card reveal delay-1">
+          <div class="content">
+            <h3>KERAMISK LAKKBESKYTTELSE (PUREONE)</h3>
+            <ul>
+              <li>PureOne Apex, Track og Quick Coat</li>
+              <li>Opptil 7 års beskyttelse / 150 000 km</li>
+              <li>Ekstrem vannavvisende, selvrensende effekt</li>
+              <li>9H hardhet – beskytter mot vaskeriper</li>
+              <li>Motstand mot UV, veisalt og kjemikalier</li>
+              <li>Kan brukes på lakk, felger, plast, gummi og folie</li>
             </ul>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 2) Dekk & Felg (шиномонтаж) -->
+    <!-- 2) DEKK & FELG -->
     <div class="svc-group">
-      <h3 class="svc-title reveal" style="color:#bfe6ff">Dekk & Felg</h3>
-      <p class="svc-sub reveal delay-1">Skift, hotell og salg av dekk og felg.</p>
+      <h3 class="svc-title reveal" style="color:#bfe6ff">Dekk &amp; Felg</h3>
+      <p class="svc-sub reveal delay-1">
+        Alt du trenger til hjulene dine – fra dekkskift til dekkhotell og salg av nye dekk og felger.
+      </p>
 
       <div class="svc-grid">
+        <!-- DEKKSKIFT -->
         <div class="svc-card reveal delay-1">
           <div class="content">
             <h3>DEKKSKIFT</h3>
-            <ul><li>Av- og påmontering</li></ul>
+            <ul>
+              <li>Av- og påmontering av hjul</li>
+              <li>Kontroll av mønsterdybde</li>
+              <li>Stramming og sikkerhetssjekk</li>
+            </ul>
           </div>
         </div>
 
+        <!-- DEKKHOTELL -->
         <div class="svc-card reveal delay-2">
           <div class="content">
             <h3>DEKKHOTELL</h3>
-            <ul><li>Avmontering</li><li>Vask</li><li>Oppbevaring</li><li>Påmontering</li></ul>
+            <ul>
+              <li>Avmontering og vask av hjul</li>
+              <li>Tørr og trygg lagring</li>
+              <li>Påmontering ved sesongskift</li>
+              <li>Praktisk løsning uten dekk i garasjen</li>
+            </ul>
           </div>
         </div>
 
+        <!-- SALG AV DEKK OG FELG -->
         <div class="svc-card reveal delay-3">
           <div class="content">
             <h3>SALG AV DEKK OG FELG</h3>
             <ul>
-              <li>Nye dekk og felger</li>
-              <li>Bestilling etter mål og sesong</li>
-              <li>Montering og balansering</li>
+              <li>Nye dekk og felger tilpasset din bil</li>
+              <li>Rådgivning etter kjørestil og sesong</li>
+              <li>Montering og balansering inkludert</li>
             </ul>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="cta-row" style="margin-top:16px">
+    <!-- CTA -->
+    <div class="cta-row" style="margin-top:18px">
       <a class="btn btn-primary btn-lg" href="#contact">Bestill time</a>
     </div>
   </div>
 </section>
+
 
   
 
