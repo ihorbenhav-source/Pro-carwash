@@ -431,59 +431,63 @@
     </p>
 
     <style>
-      /* Lokale stiler for pris-seksjonen */
-      .price-grid{
+      /* Локальные стили только для прайса */
+      .price-groups{
         margin-top:18px;
-        display:grid;
-        grid-template-columns:repeat(2,minmax(0,1fr));
-        gap:16px;
+        display:flex;
+        flex-direction:column;
+        gap:18px;
       }
-      .price-card{
+      .price-group{
         background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));
         border:1px solid rgba(255,255,255,.10);
         border-radius:16px;
-        padding:16px 16px 14px;
+        padding:16px 16px 12px;
       }
-      .price-card h3{
+      .price-group h3{
         margin:0 0 6px;
-        font-size:1.05rem;
+        font-size:1.1rem;
         color:#e8f1ff;
       }
-      .price-card small{
+      .price-group small{
         display:block;
         margin-bottom:10px;
         color:#a9bed8;
-        font-size:.8rem;
+        font-size:.85rem;
       }
-      .price-row{
+      .price-items{
+        list-style:none;
+        margin:0;
+        padding:0;
         display:flex;
-        justify-content:space-between;
-        gap:8px;
-        font-size:.95rem;
-        padding:4px 0;
-        border-bottom:1px solid rgba(255,255,255,.06);
-      }
-      .price-row:last-child{
-        border-bottom:0;
-        padding-bottom:0;
-      }
-      .price-name{
-        color:#cfe3fb;
-      }
-      .price-values{
-        display:flex;
+        flex-direction:column;
         gap:10px;
-        white-space:nowrap;
-        font-variant-numeric:tabular-nums;
       }
-      .price-values span{
-        color:#a9bed8;
+      .price-item{
+        border-top:1px solid rgba(255,255,255,.06);
+        padding-top:8px;
+      }
+      .price-item:first-child{
+        border-top:0;
+        padding-top:0;
+      }
+      .pi-name{
+        font-size:.98rem;
+        color:#cfe3fb;
+        margin-bottom:2px;
+      }
+      .pi-line{
         font-size:.9rem;
+        color:#a9bed8;
+        display:flex;
+        flex-direction:column;
+        gap:2px;
       }
-      .price-values span b{
+      .pi-line span b{
         color:#e8f1ff;
         font-weight:600;
       }
+
       .price-note{
         margin-top:14px;
         font-size:.9rem;
@@ -491,139 +495,133 @@
         text-align:center;
       }
 
-      @media (max-width:880px){
-        .price-grid{
-          grid-template-columns:1fr;
-        }
-      }
-      @media (max-width:520px){
-        .price-row{
-          flex-direction:column;
-          align-items:flex-start;
-        }
-        .price-values{
-          flex-wrap:wrap;
+      @media (min-width:860px){
+        .price-groups{
+          display:grid;
+          grid-template-columns:1fr 1fr;
+          gap:18px;
         }
       }
     </style>
 
-    <div class="price-grid">
+    <div class="price-groups">
+
       <!-- BILVASK -->
-      <div class="price-card reveal delay-1">
+      <div class="price-group reveal delay-1">
         <h3>Bilvask</h3>
         <small>Rask og grundig vask ute og inne.</small>
-
-        <div class="price-row">
-          <div class="price-name">Inn/utvendig vask</div>
-          <div class="price-values">
-            <span>P: <b>fra 900,-</b></span>
-            <span>V: <b>fra 1100,-</b></span>
-            <span>SUV: <b>fra 1100,-</b></span>
-          </div>
-        </div>
-
-        <div class="price-row">
-          <div class="price-name">Innvendig vask</div>
-          <div class="price-values">
-            <span>P: <b>fra 700,-</b></span>
-            <span>V: <b>fra 850,-</b></span>
-            <span>SUV: <b>fra 850,-</b></span>
-          </div>
-        </div>
-
-        <div class="price-row">
-          <div class="price-name">Utvendig vask</div>
-          <div class="price-values">
-            <span>P: <b>fra 350,-</b></span>
-            <span>V: <b>fra 450,-</b></span>
-            <span>SUV: <b>fra 450,-</b></span>
-          </div>
-        </div>
+        <ul class="price-items">
+          <li class="price-item">
+            <div class="pi-name">Inn/utvendig vask</div>
+            <div class="pi-line">
+              <span>Personbil: <b>fra 900,-</b></span>
+              <span>Varebil: <b>fra 1100,-</b></span>
+              <span>SUV: <b>fra 1100,-</b></span>
+            </div>
+          </li>
+          <li class="price-item">
+            <div class="pi-name">Innvendig vask</div>
+            <div class="pi-line">
+              <span>Personbil: <b>fra 700,-</b></span>
+              <span>Varebil: <b>fra 850,-</b></span>
+              <span>SUV: <b>fra 850,-</b></span>
+            </div>
+          </li>
+          <li class="price-item">
+            <div class="pi-name">Utvendig vask</div>
+            <div class="pi-line">
+              <span>Personbil: <b>fra 350,-</b></span>
+              <span>Varebil: <b>fra 450,-</b></span>
+              <span>SUV: <b>fra 450,-</b></span>
+            </div>
+          </li>
+        </ul>
       </div>
 
       <!-- POLERING OG LAKK -->
-      <div class="price-card reveal delay-2">
+      <div class="price-group reveal delay-2">
         <h3>Polering og lakk</h3>
         <small>For deg som ønsker dyp glans og bedre beskyttelse.</small>
-
-        <div class="price-row">
-          <div class="price-name">Polering</div>
-          <div class="price-values">
-            <span>P: <b>fra 3500,-</b></span>
-            <span>V: <b>fra 4500,-</b></span>
-            <span>SUV: <b>fra 4500,-</b></span>
-          </div>
-        </div>
-
-        <div class="price-row">
-          <div class="price-name">Polering og lakkrens</div>
-          <div class="price-values">
-            <span>P: <b>fra 4500,-</b></span>
-            <span>V: <b>fra 5500,-</b></span>
-            <span>SUV: <b>fra 5500,-</b></span>
-          </div>
-        </div>
-
-        <div class="price-row">
-          <div class="price-name">Keramisk lakkbeskyttelse PureOne Apex</div>
-          <div class="price-values">
-            <span><b>Pris på forespørsel</b></span>
-          </div>
-        </div>
+        <ul class="price-items">
+          <li class="price-item">
+            <div class="pi-name">Polering</div>
+            <div class="pi-line">
+              <span>Personbil: <b>fra 3500,-</b></span>
+              <span>Varebil: <b>fra 4500,-</b></span>
+              <span>SUV: <b>fra 4500,-</b></span>
+            </div>
+          </li>
+          <li class="price-item">
+            <div class="pi-name">Polering og lakkrens</div>
+            <div class="pi-line">
+              <span>Personbil: <b>fra 4500,-</b></span>
+              <span>Varebil: <b>fra 5500,-</b></span>
+              <span>SUV: <b>fra 5500,-</b></span>
+            </div>
+          </li>
+          <li class="price-item">
+            <div class="pi-name">Keramisk lakkbeskyttelse PureOne Apex</div>
+            <div class="pi-line">
+              <span><b>Pris på forespørsel – kontakt vår manager</b></span>
+            </div>
+          </li>
+        </ul>
       </div>
 
       <!-- INTERIØR -->
-      <div class="price-card reveal delay-3">
+      <div class="price-group reveal delay-3">
         <h3>Interiør</h3>
         <small>For en bil som føles ren og frisk på innsiden.</small>
-
-        <div class="price-row">
-          <div class="price-name">Innvendig rens</div>
-          <div class="price-values">
-            <span>P: <b>fra 3500,-</b></span>
-            <span>V: <b>fra 4500,-</b></span>
-            <span>SUV: <b>fra 4500,-</b></span>
-          </div>
-        </div>
+        <ul class="price-items">
+          <li class="price-item">
+            <div class="pi-name">Innvendig rens</div>
+            <div class="pi-line">
+              <span>Personbil: <b>fra 3500,-</b></span>
+              <span>Varebil: <b>fra 4500,-</b></span>
+              <span>SUV: <b>fra 4500,-</b></span>
+            </div>
+          </li>
+        </ul>
       </div>
 
       <!-- DEKK OG FELGER -->
-      <div class="price-card reveal delay-1">
+      <div class="price-group reveal delay-1">
         <h3>Dekk og felger</h3>
         <small>Dekkskift, dekkomlegging, balansering og dekkhotell.</small>
-
-        <div class="price-row">
-          <div class="price-name">Dekkskift</div>
-          <div class="price-values">
-            <span>P: <b>fra 490,-</b></span>
-            <span>V: <b>fra 590,-</b></span>
-            <span>SUV: <b>fra 590,-</b></span>
-          </div>
-        </div>
-
-        <div class="price-row">
-          <div class="price-name">Dekkomlegging / dekkmontering</div>
-          <div class="price-values">
-            <span>P: <b>fra 1200,-</b></span>
-            <span>V: <b>fra 1400,-</b></span>
-            <span>SUV: <b>fra 1400,-</b></span>
-          </div>
-        </div>
-
-        <div class="price-row">
-          <div class="price-name">Dekkhotell med skift</div>
-          <div class="price-values">
-            <span>P: <b>fra 1000,-</b></span>
-            <span>V: <b>fra 1400,-</b></span>
-            <span>SUV: <b>fra 1900,-</b></span>
-          </div>
-        </div>
+        <ul class="price-items">
+          <li class="price-item">
+            <div class="pi-name">Dekkskift (komplette hjul)</div>
+            <div class="pi-line">
+              <span>Personbil: <b>fra 490,-</b></span>
+              <span>Varebil: <b>fra 590,-</b></span>
+              <span>SUV: <b>fra 590,-</b></span>
+            </div>
+          </li>
+          <li class="price-item">
+            <div class="pi-name">Dekkomlegging / dekkmontering</div>
+            <div class="pi-line">
+              <span>Personbil: <b>fra 1200,-</b></span>
+              <span>Varebil: <b>fra 1400,-</b></span>
+              <span>SUV: <b>fra 1400,-</b></span>
+            </div>
+          </li>
+          <li class="price-item">
+            <div class="pi-name">Dekkhotell med skift</div>
+            <div class="pi-line">
+              <span>Personbil: <b>fra 1000,-</b></span>
+              <span>Varebil: <b>fra 1400,-</b></span>
+              <span>SUV: <b>fra 1900,-</b></span>
+            </div>
+          </li>
+        </ul>
       </div>
+
     </div>
 
     <p class="price-note">
       Tjenester uten oppgitt pris: <strong>Kontakt vår manager for pris.</strong>
     </p>
+
   </div>
 </section>
 
